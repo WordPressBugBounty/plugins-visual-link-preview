@@ -1,0 +1,22 @@
+#vlp-template-zones {
+    padding-bottom: 5px !important;
+}
+
+.vlp-template-zone-blocks {
+    min-height: 30px;
+
+    &.vlp-template-zone-blocks-draggingover {
+        background-color: #ddd;
+    }
+}
+
+.vlp-template-zone-block {
+    position: relative;
+    display: flex;
+    justify-content: flex-start;
+    padding: 4px 0;
+
+    .vlp-template-zone-block-handle {
+        margin-right: 10px;
+    }
+}

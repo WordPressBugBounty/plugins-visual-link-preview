@@ -1,0 +1,34 @@
+.vlp-post-select-modal {
+    width: 100%;
+
+    .vlp-post-select-input {
+        display: flex;
+        align-items: center;
+
+        .vlp-post-select-search {
+            width: 100%;
+            max-width: 300px;
+            margin: 0 5px;
+        }
+    }
+
+    .vlp-post-select-posts {
+        margin-top: 10px;
+        width: 100%;
+
+        th {
+            text-align: left;
+
+            &:nth-child(1) { width: 13%; }
+            &:nth-child(2) { width: 12%; }
+            &:nth-child(3) { width: 40%; }
+            &:nth-child(4) { width: 35%; }
+        }
+
+        .vlp-post-select-row {
+            &:hover {
+                background-color: #fafafa;
+            }
+        }
+    }
+}

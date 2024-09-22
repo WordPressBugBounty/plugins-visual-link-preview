@@ -1,0 +1,89 @@
+.vlp-manage-templates-type-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+
+    margin: 20px -10px 0 -10px;
+
+    &:nth-of-type(2) {
+        margin-top: -10px;
+    }
+
+    .vlp-manage-templates-type {
+        padding: 10px 20px;
+        margin: 10px;
+        border: 1px dashed #999;
+        border-radius: 5px;
+
+        max-width: 200px;
+        text-align: center;
+        cursor: pointer;
+
+        &.vlp-manage-templates-type-selected,
+        &:hover {
+            border-style: solid;
+            border-color: #444;
+        }
+
+        &.vlp-manage-templates-type-selected {
+            background-color: #ddd;
+        }
+
+        .vlp-manage-templates-type-name {
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+
+        .vlp-manage-templates-type-description {
+            font-style: italic;
+            font-size: 0.9em;
+        }
+    }
+}
+
+.vlp-manage-templates-import {
+    margin-top: 20px;
+    width: 100%;
+}
+
+.vlp-manage-templates-template {
+    display: inline-block;
+    padding: 10px 20px;
+    margin-right: 20px;
+    margin-bottom: 20px;
+    border: 1px dashed #999;
+    border-radius: 5px;
+    cursor: pointer;
+
+    &.vlp-manage-templates-template-selected,
+    &:hover {
+        border-style: solid;
+        border-color: #444;
+    }
+
+    &.vlp-manage-templates-template-selected {
+        background-color: #ddd;
+        font-weight: bold;
+    }
+
+    &.vlp-manage-templates-template-premium {
+        color: darkred;
+        border-color: darkred;
+    }
+}
+
+.vlp-manage-templates-template-fields {
+    text-align: center;
+    margin: 10px 0;
+}
+.vlp-manage-templates-template-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+
+    button {
+        margin: 0 5px !important;
+    }
+}

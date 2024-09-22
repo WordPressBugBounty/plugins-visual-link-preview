@@ -1,0 +1,16 @@
+#vlp-template-blocks {
+    padding-bottom: 5px !important;
+}
+
+.vlp-template-blocks-block {
+    padding: 4px 0;
+
+    &:hover {
+        cursor: pointer;
+        background-color: #ddd;
+    }
+}
+
+.vlp-template-blocks-block-edit-details {
+    font-weight: bold;
+}

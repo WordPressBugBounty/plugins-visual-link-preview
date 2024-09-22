@@ -1,0 +1,291 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Visual Link Preview\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-03-30 08:16+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: \n"
+"Language: \n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Loco https://localise.biz/\n"
+"X-Loco-Version: 2.5.2; wp-5.7\n"
+"X-Domain: visual-link-preview"
+
+#: templates/settings/settings.php:243
+msgid "Advanced"
+msgstr ""
+
+#: templates/settings/settings.php:83
+msgid "Alignment"
+msgstr ""
+
+#: templates/settings/settings.php:99
+msgid "Background Color"
+msgstr ""
+
+#. Author of the plugin
+msgid "Bootstrapped Ventures"
+msgstr ""
+
+#: templates/settings/settings.php:113
+msgid "Border"
+msgstr ""
+
+#: templates/settings/settings.php:157
+msgid "Border Color"
+msgstr ""
+
+#: templates/settings/settings.php:121
+msgid "Border Radius"
+msgstr ""
+
+#: templates/settings/settings.php:136
+msgid "Border Style"
+msgstr ""
+
+#: templates/settings/settings.php:128
+msgid "Border Width"
+msgstr ""
+
+#: templates/settings/settings.php:183
+msgid "Bottom"
+msgstr ""
+
+#: includes/public/class-vlp-template-editor.php:119
+msgid "Button"
+msgstr ""
+
+#: templates/settings/settings.php:87
+msgid "Center"
+msgstr ""
+
+#: templates/settings/settings.php:67
+msgid "Container"
+msgstr ""
+
+#: templates/settings/settings.php:140
+msgid "Dashed"
+msgstr ""
+
+#: templates/settings/settings.php:18
+msgid "Default Template"
+msgstr ""
+
+#: templates/settings/settings.php:19
+msgid "Default template to use for your visual links."
+msgstr ""
+
+#. Description of the plugin
+msgid ""
+"Display a fully customizable visual link preview for any internal or "
+"external link."
+msgstr ""
+
+#: includes/public/class-vlp-settings.php:50 templates/settings/settings.php:6
+msgid "Documentation"
+msgstr ""
+
+#: templates/settings/settings.php:141
+msgid "Dotted"
+msgstr ""
+
+#: templates/settings/settings.php:142
+msgid "Double"
+msgstr ""
+
+#: templates/settings/settings.php:26
+msgid "Dynamic"
+msgstr ""
+
+#: templates/settings/settings.php:37
+msgid "Dynamic Templates"
+msgstr ""
+
+#: templates/settings/settings.php:38
+msgid ""
+"Dynamic templates are editable in the Template Editor, providing more "
+"flexibility and options. This is the recommended method to use."
+msgstr ""
+
+#: templates/settings/settings.php:190
+msgid "Enter a thumbnail name or specific size."
+msgstr ""
+
+#: templates/settings/settings.php:143
+msgid "Groove"
+msgstr ""
+
+#. Author URI of the plugin
+msgid "http://bootstrapped.ventures/"
+msgstr ""
+
+#. URI of the plugin
+msgid "http://bootstrapped.ventures/visual-link-preview/"
+msgstr ""
+
+#: includes/public/class-vlp-template-editor.php:120 
+#: templates/settings/settings.php:169
+msgid "Image"
+msgstr ""
+
+#: templates/settings/settings.php:197
+msgid "Image Border Radius"
+msgstr ""
+
+#: templates/settings/settings.php:177
+msgid "Image Position"
+msgstr ""
+
+#: templates/settings/settings.php:189
+msgid "Image Size"
+msgstr ""
+
+#: templates/settings/settings.php:145
+msgid "Inset"
+msgstr ""
+
+#: templates/settings/settings.php:76
+msgid "Leave blank to net set a max width."
+msgstr ""
+
+#: templates/settings/settings.php:86 templates/settings/settings.php:180
+msgid "Left"
+msgstr ""
+
+#: templates/settings/settings.php:75
+msgid "Max width"
+msgstr ""
+
+#: templates/settings/settings.php:248
+msgid "Microlink API Key"
+msgstr ""
+
+#: templates/settings/settings.php:44
+msgid "Open the Template Editor"
+msgstr ""
+
+#: templates/settings/settings.php:249
+msgid ""
+"Optionally add your microlink.io API key. Leave blank to use the free plan "
+"(limited number of requests per month)."
+msgstr ""
+
+#: templates/settings/settings.php:146
+msgid "Outset"
+msgstr ""
+
+#: templates/settings/settings.php:105
+msgid "Padding"
+msgstr ""
+
+#: templates/settings/settings.php:144
+msgid "Ridge"
+msgstr ""
+
+#: templates/settings/settings.php:88 templates/settings/settings.php:181
+msgid "Right"
+msgstr ""
+
+#: includes/admin/class-vlp-assets.php:56
+msgid "Select or Upload Image"
+msgstr ""
+
+#: templates/settings/settings.php:129
+msgid "Set to 0 to not use a border."
+msgstr ""
+
+#: includes/public/class-vlp-settings.php:49
+msgid "Settings"
+msgstr ""
+
+#: templates/settings/settings.php:139
+msgid "Solid"
+msgstr ""
+
+#: templates/settings/settings.php:26
+msgid "Static"
+msgstr ""
+
+#: templates/settings/settings.php:53
+msgid "Static Templates"
+msgstr ""
+
+#: templates/settings/settings.php:54
+msgid ""
+"Static templates are coded and allow for some smaller style changes using "
+"the settings below. The settings below will only affect static templates "
+"that have been coded to use them. For most people, using a dynamic template "
+"and the Template Editor is what we recommend."
+msgstr ""
+
+#: includes/public/class-vlp-template-editor.php:122
+msgid "Summary"
+msgstr ""
+
+#: templates/settings/settings.php:233
+msgid "Summary Color"
+msgstr ""
+
+#: templates/settings/settings.php:226
+msgid "Summary Font Size"
+msgstr ""
+
+#: templates/settings/settings.php:13
+msgid "Template"
+msgstr ""
+
+#: includes/public/class-vlp-template-editor.php:36 
+#: templates/settings/settings.php:41
+msgid "Template Editor"
+msgstr ""
+
+#: templates/settings/settings.php:205
+msgid "Text"
+msgstr ""
+
+#: includes/public/class-vlp-template-editor.php:121
+msgid "Title"
+msgstr ""
+
+#: templates/settings/settings.php:220
+msgid "Title Color"
+msgstr ""
+
+#: templates/settings/settings.php:213
+msgid "Title Font Size"
+msgstr ""
+
+#: templates/settings/settings.php:182
+msgid "Top"
+msgstr ""
+
+#: includes/public/class-vlp-template-editor.php:123
+msgid "URL"
+msgstr ""
+
+#: templates/settings/settings.php:59
+msgid "Use Custom Styling"
+msgstr ""
+
+#: includes/admin/class-vlp-assets.php:57
+msgid "Use Image"
+msgstr ""
+
+#: templates/settings/settings.php:7
+msgid ""
+"Use Visual Link Preview to create beautiful call to action links to your own "
+"posts or external websites."
+msgstr ""
+
+#. Name of the plugin
+msgid "Visual Link Preview"
+msgstr ""
+
+#: includes/public/class-vlp-template-editor.php:36
+msgid "VLP Template Editor"
+msgstr ""

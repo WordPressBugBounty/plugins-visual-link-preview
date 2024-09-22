@@ -1,0 +1,37 @@
+#vlp-template-main {
+    .vlp-main-container-preview {
+        max-width: 600px;
+        margin: 0 auto;
+
+        &, & > p {
+            font-size: 16px;
+        }
+    }
+    .CodeMirror {
+        margin-top: 10px;
+        height: 350px;
+        border: 1px solid #ddd;
+    }
+
+    .vlp-template-block-hovering {
+        outline: 2px dashed blue;
+        outline-offset: 2px;
+    }
+
+    &.vlp-template-main-add {
+        .vlp-template-block-hovering {
+            outline-color: green;
+        }
+    }
+
+    &.vlp-template-main-remove {
+        .vlp-template-block-hovering {
+            outline-color: red;
+        }
+    }
+
+    .vlp-template-editor-premium-only {
+        color: darkred;
+        font-style: italic;
+    }
+}

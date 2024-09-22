@@ -1,0 +1,175 @@
+.vlp-template-property {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.vlp-template-property {
+    padding: 4px 0;
+    border-bottom: 1px solid #ddd;
+
+    &:last-child {
+        border-bottom: none;
+    }
+
+    .vlp-template-property-label {
+        font-weight: bold;
+        padding: 4px 0;
+    }
+
+    // Open dropdown menus to top to prevent scroll/overflow issues.
+    .Select-menu-outer {
+        position: absolute !important;
+        top: auto !important;
+        bottom: calc(100% - 1px) !important;
+        border-bottom-left-radius: 0px !important;
+        border-bottom-right-radius: 0px !important;
+        border-top-left-radius: 5px !important;
+        border-top-right-radius: 5px !important;
+    }
+    
+    .is-open .Select-control {
+        border-top-right-radius: 0 !important;
+        border-top-left-radius: 0 !important;
+        border-bottom-right-radius: 5px !important;
+        border-bottom-left-radius: 5px !important;
+    }
+    
+    .vlp-template-property-value {
+        &.vlp-template-property-value-font {
+            width: 100%;
+
+            input {
+                width: 100%;
+            }
+            .vlp-template-property-input {
+                margin-top: 5px;
+            }
+        }
+        &.vlp-template-property-value-text {
+            width: 100%;
+
+            input {
+                width: 100%;
+            }
+        }
+
+        &.vlp-template-property-value-align,
+        &.vlp-template-property-value-border,
+        &.vlp-template-property-value-float,
+        &.vlp-template-property-value-dropdown {
+            width: 100%;
+        }
+
+        &.vlp-template-property-value-icon {
+            a {
+                font-size: 0.9em;
+            }
+
+            .vlp-template-property-icon-select {
+                max-width: 16px;
+                max-height: 16px;
+            }
+
+            .vlp-template-property-icon-selected-container {
+                display: flex;
+
+                .vlp-template-property-icon-select {
+                    display: flex;
+                    margin-right: 5px;
+                }
+            }
+
+            .vlp-template-property-icon-select-container {
+                width: 100%;
+
+                .vlp-template-property-icon-select-container-icons {
+                    margin-top: 5px;
+                }
+                
+                .vlp-template-property-icon-select {
+                    display: inline-block;
+                    cursor: pointer;
+                    margin: 2px;
+                }
+            }
+        }
+
+        &.vlp-template-property-value-color,
+        &.vlp-template-property-value-toggle {
+            .vlp-template-property-input {
+                display: flex;
+                align-items: center;
+            }
+        }
+
+        &.vlp-template-property-value-font_size,
+        &.vlp-template-property-value-size {
+            display: flex;
+            align-items: center;
+
+            input {
+                width: 60px;
+            }
+
+            .vlp-template-property-value-size-unit {
+                margin-left: 5px;
+                cursor: pointer;
+                color: #999;
+
+                &.vlp-template-property-value-size-unit-selected {
+                    color: #444;
+                    text-decoration: underline;
+                }
+            }
+        }
+
+        &.vlp-template-property-value-percentage {
+            display: flex;
+            align-items: center;
+
+            input {
+                width: 60px;
+            }
+
+            .vlp-template-property-number-suffix {
+                margin-left: 5px;
+            }
+        }
+
+        &.vlp-template-property-value-image_size {
+            width: 100%;
+
+            label {
+                font-size: 0.8em;
+                font-style: italic;
+                margin-bottom: 3px;
+            }
+
+            .Select-menu-outer {
+                position: relative;
+            }
+
+            .vlp-template-property-input-width-height {
+                display: flex;
+                justify-content: flex-start;
+                align-items: center;
+
+                input {
+                    width: 40%;
+                    max-width: 75px;
+
+                    &:first-child {
+                        margin-right: 5px;
+                    }
+                    &:last-child {
+                        margin-left: 5px;
+                    }
+                }
+            }
+        }
+    }
+}
+
