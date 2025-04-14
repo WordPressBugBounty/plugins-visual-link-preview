@@ -17,18 +17,32 @@ class VLP_Settings {
 	 * @since	2.0.0
 	 */
 	public static function init() {
-		require_once( VLP_DIR . 'templates/settings/settings.php' );
-		require_once( VLP_DIR . 'vendor/bv-settings/bv-settings.php' );
+		// Make sure settings page gets loaded.
+		add_action( 'wp_loaded', array( __CLASS__, 'get_instance' ) );
+	}
 
-        self::$bvs = new BV_Settings( array(
-            'uid' => 'vlp',
-            'menu_title' => 'Visual Link Preview',
-            'settings' => $settings_structure,
-		) );
-		
-		add_action( 'admin_footer-settings_page_bv_settings_vlp', array( __CLASS__, 'add_support_widget' ) );
-		add_filter( 'plugin_action_links_visual-link-preview/visual-link-preview.php', array( __CLASS__, 'plugin_action_links' ) );
-		add_action( 'admin_notices', array( __CLASS__, 'activation_notice' ) );
+	/**
+	 * Get the settings instance.
+	 *
+	 * @since    3.0.0
+	 */
+	public static function get_instance() {
+		if ( is_null( self::$bvs ) ) {
+			require_once( VLP_DIR . 'templates/settings/settings.php' );
+			require_once( VLP_DIR . 'vendor/bv-settings/bv-settings.php' );
+
+			self::$bvs = new BV_Settings( array(
+				'uid' => 'vlp',
+				'menu_title' => 'Visual Link Preview',
+				'settings' => $settings_structure,
+			) );
+			
+			add_action( 'admin_footer-settings_page_bv_settings_vlp', array( __CLASS__, 'add_support_widget' ) );
+			add_filter( 'plugin_action_links_visual-link-preview/visual-link-preview.php', array( __CLASS__, 'plugin_action_links' ) );
+			add_action( 'admin_notices', array( __CLASS__, 'activation_notice' ) );
+		}
+
+		return self::$bvs;
 	}
 
 	/**
@@ -76,7 +90,7 @@ class VLP_Settings {
 	 * @param	mixed $setting Setting to get the value for.
 	 */
 	public static function get( $setting ) {
-		return self::$bvs->get( $setting );
+		return self::get_instance()->get( $setting );
 	}
 
 	/**
@@ -86,7 +100,7 @@ class VLP_Settings {
 	 * @param	mixed $setting Setting to get the default for.
 	 */
 	public static function get_default( $setting ) {
-		return self::$bvs->get_default( $setting );
+		return self::get_instance()->get_default( $setting );
 	}
 }
 VLP_Settings::init();

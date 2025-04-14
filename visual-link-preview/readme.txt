@@ -3,8 +3,8 @@ Contributors: BrechtVds
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=QG7KZMGFU325Y
 Tags: link preview, snippet, summary, visual link
 Requires at least: 4.4
-Tested up to: 6.6
-Stable tag: trunk
+Tested up to: 6.8
+Stable tag: 2.2.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -56,6 +56,10 @@ Yes! We pride ourselves on offering awesome support and almost always answer sup
 4. Link to your own posts or to any external URL
 
 == Changelog ==
+= 2.2.7 =
+* Improvement: WordPress 6.8 compatibility
+* Fix: Loading translations too early
+
 = 2.2.6 =
 * Fix: Deprecation warning
 
@@ -151,6 +155,9 @@ Yes! We pride ourselves on offering awesome support and almost always answer sup
 * Very first version of this link preview plugin
 
 == Upgrade notice ==
+= 2.2.7 =
+Update to ensure compatibility with WordPress 6.8
+
 = 2.2.6 =
 Update to ensure compatibility with WordPress 6.2
 

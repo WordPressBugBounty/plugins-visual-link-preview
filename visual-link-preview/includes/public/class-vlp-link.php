@@ -173,7 +173,7 @@ class VLP_Link {
 
 		// Prevent image stretching in Gutenberg.
 		$thumb = wp_get_attachment_image_src( $image_id, $size );
-		if ( $thumb[1] ) {
+		if ( $thumb && $thumb[1] ) {
 			$style = 'max-width: ' . $thumb[1] . 'px;';
 
 			if ( false !== stripos( $image, ' style="' ) ) {

@@ -94,6 +94,8 @@ export default {
                     content.image_id = -1;
                     content.image_url = json.data.image.url;
                 }
+
+                document.dispatchEvent( new CustomEvent( 'vlp-external-url-data', { detail: { json, content } } ) );
             }
 
             return {

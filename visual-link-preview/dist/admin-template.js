@@ -7805,6 +7805,12 @@ var ajaxNonce = undefined === window.vlp_admin ? vlp_blocks.nonce : vlp_admin.no
           content.image_id = -1;
           content.image_url = json.data.image.url;
         }
+        document.dispatchEvent(new CustomEvent('vlp-external-url-data', {
+          detail: {
+            json: json,
+            content: content
+          }
+        }));
       }
       return {
         success: 'success' === json.status,
