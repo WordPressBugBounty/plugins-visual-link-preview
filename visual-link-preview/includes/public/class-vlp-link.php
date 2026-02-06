@@ -53,7 +53,15 @@ class VLP_Link {
 			$properties['title'] = isset( $unsanitized->title ) ? sanitize_text_field( $unsanitized->title ) : '';
 			$properties['summary'] = isset( $unsanitized->summary ) ? wp_kses_post( nl2br( $unsanitized->summary ) ) : '';
 			$properties['template'] = isset( $unsanitized->template ) ? sanitize_key( $unsanitized->template ) : '';
-			$properties['custom_class'] = isset( $unsanitized->custom_class ) ? sanitize_text_field( $unsanitized->custom_class ) : '';
+			// Sanitize custom class(es) - handle multiple classes separated by spaces.
+			if ( isset( $unsanitized->custom_class ) && $unsanitized->custom_class ) {
+				$classes = explode( ' ', $unsanitized->custom_class );
+				$classes = array_map( 'sanitize_html_class', $classes );
+				$classes = array_filter( $classes ); // Remove empty values.
+				$properties['custom_class'] = implode( ' ', $classes );
+			} else {
+				$properties['custom_class'] = '';
+			}
 
 			// With backwards compatibility.
 			if ( isset( $unsanitized->nofollow ) ) {
@@ -78,6 +86,15 @@ class VLP_Link {
 	 */
 	public function output() {
 		$output = '';
+
+		// If RSS, output link only.
+		if ( is_feed() ) {
+			$rss_feed_output = VLP_Settings::get( 'rss_feed_output' );
+
+			if ( 'visual_link' !== $rss_feed_output ) {
+				return $this->url();
+			}
+		}
 
 		if ( $this->type() && ( $this->image_id() || $this->title() || $this->summary() ) ) {
 			$output = VLP_Template_Manager::get_template( $this, $this->template() );

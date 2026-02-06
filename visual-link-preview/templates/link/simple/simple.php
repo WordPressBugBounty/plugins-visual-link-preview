@@ -1,4 +1,4 @@
-<div class="vlp-link-container vlp-template-default <?php echo $link->custom_class(); ?>">
+<div class="vlp-link-container vlp-template-default <?php echo esc_attr( $link->custom_class() ); ?>">
 	<?php echo $link->output_url(); ?>
 	<?php if ( $link->image_id() ) : ?>
 	<div class="vlp-link-image-container">

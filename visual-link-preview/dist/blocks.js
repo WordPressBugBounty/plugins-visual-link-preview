@@ -851,6 +851,7 @@ var ajaxNonce = undefined === window.vlp_admin ? vlp_blocks.nonce : vlp_admin.no
     }
   },
   getContentFromPost: function getContentFromPost(postId) {
+    document.dispatchEvent(new CustomEvent('vlp-external-url-start'));
     return fetch(ajaxUrl, {
       method: 'POST',
       credentials: 'same-origin',
@@ -865,58 +866,78 @@ var ajaxNonce = undefined === window.vlp_admin ? vlp_blocks.nonce : vlp_admin.no
       });
     });
   },
-  getContentFromUrl: function getContentFromUrl(url) {
+  getContentFromUrl: function getContentFromUrl(url, provider) {
     var content = {};
 
     // Check if valid URL.
     try {
       var testIfValidURL = new URL(url);
     } catch (e) {
+      document.dispatchEvent(new CustomEvent('vlp-external-url-error', {
+        detail: {
+          message: 'Invalid URL format.'
+        }
+      }));
       return Promise.resolve({
         success: false,
-        data: content
+        data: content,
+        error: 'Invalid URL format.'
       });
     }
-    var endpoint = 'https://api.microlink.io';
-    var headers = {};
-    if ('' !== vlp_admin.microlink_api_key) {
-      endpoint = 'https://pro.microlink.io';
-      headers['x-api-key'] = vlp_admin.microlink_api_key;
-    }
 
-    // Valid URL, use OpenGraph API.
-    return fetch(endpoint + '?url=' + encodeURIComponent(url), {
-      headers: headers
+    // Use server-side AJAX handler.
+    var ajaxUrl = undefined === window.vlp_admin ? vlp_blocks.ajax_url : vlp_admin.ajax_url;
+    var ajaxNonce = undefined === window.vlp_admin ? vlp_blocks.nonce : vlp_admin.nonce;
+    var body = 'action=vlp_get_url_content&security=' + ajaxNonce + '&url=' + encodeURIComponent(url);
+    if (provider) {
+      body += '&provider=' + encodeURIComponent(provider);
+    }
+    return fetch(ajaxUrl, {
+      method: 'POST',
+      credentials: 'same-origin',
+      body: body,
+      headers: {
+        'Accept': 'application/json, text/plain, */*',
+        'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
+      }
     }).then(function (response) {
       return response.json();
     }).then(function (json) {
-      if ('success' === json.status) {
-        if (json.data.title) {
-          content.title = json.data.title;
-        }
-        if (json.data.description) {
-          content.summary = json.data.description;
-        }
-        if (json.data.image && json.data.image.url) {
-          content.image_id = -1;
-          content.image_url = json.data.image.url;
-        }
+      if (json.success && json.data) {
+        content = json.data.data || {};
+        content.provider_used = json.data.provider_used || '';
         document.dispatchEvent(new CustomEvent('vlp-external-url-data', {
           detail: {
             json: json,
             content: content
           }
         }));
+      } else {
+        // Dispatch error event for error handling.
+        var errorMessage = json.data && json.data.message ? json.data.message : 'Failed to fetch URL metadata.';
+        document.dispatchEvent(new CustomEvent('vlp-external-url-error', {
+          detail: {
+            message: errorMessage
+          }
+        }));
       }
       return {
-        success: 'success' === json.status,
-        data: content
+        success: json.success || false,
+        data: content,
+        error: json.data && json.data.message ? json.data.message : null
       };
     }).catch(function (error) {
       console.log('Fetch Error', error);
+      var errorMessage = error.message || 'Failed to fetch URL metadata.';
+      document.dispatchEvent(new CustomEvent('vlp-external-url-error', {
+        detail: {
+          message: errorMessage
+        }
+      }));
       return {
         success: false,
-        data: {}
+        data: {},
+        error: errorMessage
       };
     });
   },
@@ -1051,6 +1072,15 @@ var ImageSelect = /*#__PURE__*/function (_Component) {
 
 ;// CONCATENATED MODULE: ./visual-link-preview/assets/js/blocks/visual-link-preview/edit/Sidebar.js
 function Sidebar_typeof(obj) { "@babel/helpers - typeof"; return Sidebar_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, Sidebar_typeof(obj); }
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
+function Sidebar_ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+function Sidebar_objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? Sidebar_ownKeys(Object(source), !0).forEach(function (key) { Sidebar_defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : Sidebar_ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+function Sidebar_defineProperty(obj, key, value) { key = Sidebar_toPropertyKey(key); if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 function Sidebar_classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 function Sidebar_defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, Sidebar_toPropertyKey(descriptor.key), descriptor); } }
 function Sidebar_createClass(Constructor, protoProps, staticProps) { if (protoProps) Sidebar_defineProperties(Constructor.prototype, protoProps); if (staticProps) Sidebar_defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
@@ -1082,19 +1112,108 @@ if (wp.hasOwnProperty('blockEditor')) {
   PlainText = wp.editor.PlainText;
 }
 
+
 var Sidebar_default = /*#__PURE__*/function (_Component) {
   Sidebar_inherits(_default, _Component);
   var _super = Sidebar_createSuper(_default);
-  function _default() {
+  function _default(props) {
+    var _this;
     Sidebar_classCallCheck(this, _default);
-    return _super.apply(this, arguments);
+    _this = _super.call(this, props);
+    _this.state = {
+      isLoading: false
+    };
+    _this.handleUrlData = _this.handleUrlData.bind(Sidebar_assertThisInitialized(_this));
+    _this.handleUrlError = _this.handleUrlError.bind(Sidebar_assertThisInitialized(_this));
+    _this.handleUrlStart = _this.handleUrlStart.bind(Sidebar_assertThisInitialized(_this));
+    return _this;
   }
   Sidebar_createClass(_default, [{
-    key: "render",
-    value: function render() {
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      document.addEventListener('vlp-external-url-data', this.handleUrlData);
+      document.addEventListener('vlp-external-url-error', this.handleUrlError);
+      document.addEventListener('vlp-external-url-start', this.handleUrlStart);
+    }
+  }, {
+    key: "componentWillUnmount",
+    value: function componentWillUnmount() {
+      document.removeEventListener('vlp-external-url-data', this.handleUrlData);
+      document.removeEventListener('vlp-external-url-error', this.handleUrlError);
+      document.removeEventListener('vlp-external-url-start', this.handleUrlStart);
+    }
+  }, {
+    key: "handleUrlData",
+    value: function handleUrlData() {
+      this.setState({
+        isLoading: false
+      });
+    }
+  }, {
+    key: "handleUrlStart",
+    value: function handleUrlStart() {
+      this.setState({
+        isLoading: true
+      });
+    }
+  }, {
+    key: "handleUrlError",
+    value: function handleUrlError() {
+      this.setState({
+        isLoading: false
+      });
+    }
+  }, {
+    key: "getProviderName",
+    value: function getProviderName(providerId) {
+      if (!window.vlp_blocks || !window.vlp_blocks.url_providers) {
+        return providerId;
+      }
+      var provider = window.vlp_blocks.url_providers.find(function (p) {
+        return p.id === providerId;
+      });
+      return provider ? provider.name : providerId;
+    }
+  }, {
+    key: "getAvailableProviders",
+    value: function getAvailableProviders() {
+      if (!window.vlp_blocks || !window.vlp_blocks.url_providers) {
+        return [];
+      }
+      return window.vlp_blocks.url_providers.filter(function (p) {
+        return p.available;
+      });
+    }
+  }, {
+    key: "fetchUrlMetadata",
+    value: function fetchUrlMetadata() {
+      var providerId = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
       var _this$props = this.props,
         attributes = _this$props.attributes,
         setAttributes = _this$props.setAttributes;
+      var url = attributes.url;
+      if (!url) {
+        return;
+      }
+      Api.old.getContentFromUrl(url, providerId).then(function (_ref) {
+        var data = _ref.data,
+          error = _ref.error;
+        if (!error && data) {
+          setAttributes(Sidebar_objectSpread({}, data));
+        }
+      });
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      var _this2 = this;
+      var _this$props2 = this.props,
+        attributes = _this$props2.attributes,
+        setAttributes = _this$props2.setAttributes;
+      var isLoading = this.state.isLoading;
+      var availableProviders = this.getAvailableProviders();
+      var hasUrl = attributes.url && attributes.url.trim() !== '';
+      var hasFetched = attributes.provider_used && attributes.provider_used.trim() !== '';
       var changeLinkButton = /*#__PURE__*/React.createElement("div", {
         style: {
           marginTop: 15
@@ -1104,7 +1223,8 @@ var Sidebar_default = /*#__PURE__*/function (_Component) {
         onClick: function onClick() {
           setAttributes({
             type: false,
-            post: 0
+            post: 0,
+            provider_used: ''
           });
         }
       }, "Change Link"));
@@ -1128,7 +1248,35 @@ var Sidebar_default = /*#__PURE__*/function (_Component) {
       }, /*#__PURE__*/React.createElement("a", {
         href: attributes.url,
         target: "_blank"
-      }, " ", attributes.url), changeLinkButton), /*#__PURE__*/React.createElement(PanelBody, {
+      }, " ", attributes.url), changeLinkButton), 'external' === attributes.type && hasUrl && /*#__PURE__*/React.createElement(PanelBody, {
+        title: Sidebar_('Metadata Provider')
+      }, !hasFetched && !isLoading && /*#__PURE__*/React.createElement(Sidebar_Button, {
+        variant: "primary",
+        onClick: function onClick() {
+          return _this2.fetchUrlMetadata();
+        }
+      }, Sidebar_('Automatically fetch details')), isLoading && /*#__PURE__*/React.createElement("div", null, Sidebar_('Fetching...')), !isLoading && hasFetched && attributes.provider_used && /*#__PURE__*/React.createElement("div", {
+        style: {
+          marginBottom: 10
+        }
+      }, Sidebar_('Fetched using:'), " ", /*#__PURE__*/React.createElement("strong", null, this.getProviderName(attributes.provider_used))), !isLoading && hasFetched && availableProviders.length > 1 && /*#__PURE__*/React.createElement(SelectControl, {
+        label: Sidebar_('Retry with different provider'),
+        value: "",
+        options: [{
+          label: Sidebar_('Select provider...'),
+          value: ''
+        }].concat(_toConsumableArray(availableProviders.map(function (provider) {
+          return {
+            label: provider.name,
+            value: provider.id
+          };
+        }))),
+        onChange: function onChange(value) {
+          if (value) {
+            _this2.fetchUrlMetadata(value);
+          }
+        }
+      })), /*#__PURE__*/React.createElement(PanelBody, {
         title: Sidebar_('Content')
       }, /*#__PURE__*/React.createElement("strong", null, /*#__PURE__*/React.createElement(PlainText, {
         placeholder: Sidebar_('Title', 'dynamic-widget-content'),
@@ -1610,6 +1758,35 @@ var _default = /*#__PURE__*/function (_Component) {
       });
     }
   }, {
+    key: "fetchUrlMetadata",
+    value: function fetchUrlMetadata() {
+      var _this3 = this;
+      var providerId = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+      var _this$props = this.props,
+        attributes = _this$props.attributes,
+        setAttributes = _this$props.setAttributes;
+      var url = attributes.url;
+      if (!url) {
+        return;
+      }
+      this.setState({
+        gettingContent: true
+      }, function () {
+        Api.old.getContentFromUrl(url, providerId).then(function (_ref2) {
+          var data = _ref2.data,
+            error = _ref2.error;
+          if (!error && data) {
+            setAttributes(edit_objectSpread({}, data));
+          }
+          setTimeout(function () {
+            _this3.setState({
+              gettingContent: false
+            });
+          }, 1000);
+        });
+      });
+    }
+  }, {
     key: "render",
     value: function render() {
       var className = this.props.className;
@@ -1696,6 +1873,10 @@ registerBlockType('visual-link-preview/link', {
       default: ''
     },
     url: {
+      type: 'string',
+      default: ''
+    },
+    provider_used: {
       type: 'string',
       default: ''
     },

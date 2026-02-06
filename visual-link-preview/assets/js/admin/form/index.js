@@ -15,6 +15,7 @@ export default class Form extends Component {
     
     constructor(props) {
         super(props);
+        this.urlFetchTimeout = null;
     }
 
     onChangePost(option) {
@@ -35,13 +36,52 @@ export default class Form extends Component {
     onChangeURL(e) {
         const url = e.target.value;
         this.props.onUpdateField('url', url);
+        
+        // Reset provider_used when URL changes (only if it was previously set)
+        if ( this.props.link.provider_used ) {
+            this.props.onUpdateField('provider_used', '');
+        }
+    }
 
-        // TODO Debounce.
-        Api.old.getContentFromUrl( url ).then(
-            ({ data }) => {
-                this.props.onUpdateLink({
-                    ...data,
-                });
+    onRetryWithProvider(providerId) {
+        const url = this.props.link.url;
+        if ( ! url ) {
+            return;
+        }
+
+        if ( this.urlFetchTimeout ) {
+            clearTimeout( this.urlFetchTimeout );
+        }
+
+        this.fetchUrlMetadata( url, providerId );
+    }
+
+    onFetchDetails() {
+        const url = this.props.link.url;
+        if ( ! url ) {
+            return;
+        }
+
+        if ( this.urlFetchTimeout ) {
+            clearTimeout( this.urlFetchTimeout );
+        }
+
+        this.fetchUrlMetadata( url );
+    }
+
+    fetchUrlMetadata(url, providerId = null) {
+        Api.old.getContentFromUrl( url, providerId ).then(
+            ({ data, error }) => {
+                if ( error ) {
+                    this.props.onUpdateLink({
+                        ...data,
+                        provider_used: '',
+                    });
+                } else {
+                    this.props.onUpdateLink({
+                        ...data,
+                    });
+                }
             }
         );
     }
@@ -51,6 +91,12 @@ export default class Form extends Component {
             image_id: image.id,
             image_url: image.url,
         });
+    }
+
+    componentWillUnmount() {
+        if ( this.urlFetchTimeout ) {
+            clearTimeout( this.urlFetchTimeout );
+        }
     }
     
     render() {
@@ -74,7 +120,13 @@ export default class Form extends Component {
                             onChangeField={this.onChangePost.bind(this)}
                         />
                         :
-                        <FieldUrl value={this.props.link.url} onChangeField={this.onChangeURL.bind(this)} />
+                        <FieldUrl 
+                            value={this.props.link.url} 
+                            onChangeField={this.onChangeURL.bind(this)}
+                            providerUsed={this.props.link.provider_used}
+                            onRetryWithProvider={this.onRetryWithProvider.bind(this)}
+                            onFetchDetails={this.onFetchDetails.bind(this)}
+                        />
                     }
                     {
                         this.props.link.type === 'external' || this.props.link.post > 0

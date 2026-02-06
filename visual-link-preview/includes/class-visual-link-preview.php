@@ -31,7 +31,7 @@ class Visual_Link_Preview {
 	 * @since    1.0.0
 	 */
 	private function define_constants() {
-		define( 'VLP_VERSION', '2.2.7' );
+		define( 'VLP_VERSION', '2.3.0' );
 		define( 'VLP_DIR', plugin_dir_path( dirname( __FILE__ ) ) );
 		define( 'VLP_URL', plugin_dir_url( dirname( __FILE__ ) ) );
 	}
@@ -63,6 +63,7 @@ class Visual_Link_Preview {
 		require_once( VLP_DIR . 'includes/public/class-vlp-dynamic-template-block.php' );
 		require_once( VLP_DIR . 'includes/public/class-vlp-dynamic-template-layout.php' );
 		require_once( VLP_DIR . 'includes/public/class-vlp-dynamic-template.php' );
+		require_once( VLP_DIR . 'includes/public/class-vlp-compatibility.php' );
 		require_once( VLP_DIR . 'includes/public/class-vlp-link.php' );
 		require_once( VLP_DIR . 'includes/public/class-vlp-shortcode.php' );
 		require_once( VLP_DIR . 'includes/public/class-vlp-template-editor.php' );
@@ -86,6 +87,10 @@ class Visual_Link_Preview {
 		// Admin.
 		if ( is_admin() ) {
 			require_once( VLP_DIR . 'includes/admin/class-vlp-assets.php' );
+
+			// Providers.
+			require_once( VLP_DIR . 'includes/admin/providers/class-vlp-url-provider-manager.php' );
+			VLP_Url_Provider_Manager::init();
 
 			// Modal.
 			require_once( VLP_DIR . 'includes/admin/modal/class-vlp-button.php' );

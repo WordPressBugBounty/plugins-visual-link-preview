@@ -239,10 +239,22 @@ $settings_structure = array(
         ),
     ),
     array(
-        'id' => 'advanced',
-        'name' => __( 'Advanced', 'visual-link-preview' ),
-        'icon' => 'cog',
+        'id' => 'providers',
+        'name' => __( 'Metadata Providers', 'visual-link-preview' ),
+        'description' => __( 'Metadata providers are used to fetch metadata for external URLs, such as title, summary, and image.', 'visual-link-preview' ),
+        'icon' => 'link',
         'settings' => array(
+            array(
+                'id' => 'url_provider_order',
+                'name' => __( 'URL Provider Order', 'visual-link-preview' ),
+                'description' => sprintf(
+                    __( 'One provider ID per line (%s). Order matters - providers are tried top to bottom.', 'visual-link-preview' ),
+                    'php, microlink, linkpreview'
+                ),
+                'type' => 'textarea',
+                'default' => "php\nmicrolink\nlinkpreview",
+                'rows' => 3,
+            ),
             array(
                 'id' => 'microlink_api_key',
                 'name' => __( 'Microlink API Key', 'visual-link-preview' ),
@@ -250,6 +262,32 @@ $settings_structure = array(
                 'documentation' => 'https://microlink.io',
                 'type' => 'text',
                 'default' => '',
+            ),
+            array(
+                'id' => 'linkpreview_api_key',
+                'name' => __( 'LinkPreview API Key', 'visual-link-preview' ),
+                'description' => __( 'Optionally add your linkpreview.net API key.', 'visual-link-preview' ),
+                'documentation' => 'https://www.linkpreview.net',
+                'type' => 'text',
+                'default' => '',
+            ),
+        ),
+    ),
+    array(
+        'id' => 'advanced',
+        'name' => __( 'Advanced', 'visual-link-preview' ),
+        'icon' => 'cog',
+        'settings' => array(
+            array(
+                'id' => 'rss_feed_output',
+                'name' => __( 'RSS Feed Output', 'visual-link-preview' ),
+                'description' => __( 'Choose how visual links should be rendered inside RSS feeds.', 'visual-link-preview' ),
+                'type' => 'dropdown',
+                'options' => array(
+                    'visual_link' => __( 'Visual Link Preview', 'visual-link-preview' ),
+                    'simple_url' => __( 'Simple URL', 'visual-link-preview' ),
+                ),
+                'default' => 'simple_url',
             ),
         ),
     ),

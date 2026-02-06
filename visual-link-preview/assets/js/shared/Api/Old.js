@@ -43,6 +43,8 @@ export default {
         }
     },
     getContentFromPost(postId) {
+        document.dispatchEvent( new CustomEvent( 'vlp-external-url-start' ) );
+
         return fetch(ajaxUrl, {
             method: 'POST',
             credentials: 'same-origin',
@@ -58,56 +60,67 @@ export default {
             });
         });
     },
-    getContentFromUrl(url) {
+    getContentFromUrl(url, provider) {
         let content = {};
 
         // Check if valid URL.
         try {
             const testIfValidURL = new URL(url);
         } catch(e) {
+            document.dispatchEvent( new CustomEvent( 'vlp-external-url-error', { detail: { message: 'Invalid URL format.' } } ) );
             return Promise.resolve({
                 success: false,
                 data: content,
+                error: 'Invalid URL format.',
             });
         }
 
-        let endpoint = 'https://api.microlink.io';
-        let headers = {};
+        // Use server-side AJAX handler.
+        const ajaxUrl = undefined === window.vlp_admin ? vlp_blocks.ajax_url : vlp_admin.ajax_url;
+        const ajaxNonce = undefined === window.vlp_admin ? vlp_blocks.nonce : vlp_admin.nonce;
 
-        if ( '' !== vlp_admin.microlink_api_key ) {
-            endpoint = 'https://pro.microlink.io';
-            headers['x-api-key'] = vlp_admin.microlink_api_key;
+        let body = 'action=vlp_get_url_content&security=' + ajaxNonce + '&url=' + encodeURIComponent( url );
+        if ( provider ) {
+            body += '&provider=' + encodeURIComponent( provider );
         }
 
-        // Valid URL, use OpenGraph API.
-        return fetch( endpoint + '?url=' + encodeURIComponent( url ), { headers })
+        return fetch(ajaxUrl, {
+            method: 'POST',
+            credentials: 'same-origin',
+            body: body,
+            headers: {
+                'Accept': 'application/json, text/plain, */*',
+                'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8',
+            },
+        })
         .then((response) => response.json())
         .then((json) => {
-            if ( 'success' === json.status ) {
-                if ( json.data.title ) {
-                    content.title = json.data.title;
-                }
-                if ( json.data.description ) {
-                    content.summary = json.data.description;
-                }
-                if ( json.data.image && json.data.image.url ) {
-                    content.image_id = -1;
-                    content.image_url = json.data.image.url;
-                }
+            if ( json.success && json.data ) {
+                content = json.data.data || {};
+                content.provider_used = json.data.provider_used || '';
 
                 document.dispatchEvent( new CustomEvent( 'vlp-external-url-data', { detail: { json, content } } ) );
+            } else {
+                // Dispatch error event for error handling.
+                const errorMessage = json.data && json.data.message ? json.data.message : 'Failed to fetch URL metadata.';
+                document.dispatchEvent( new CustomEvent( 'vlp-external-url-error', { detail: { message: errorMessage } } ) );
             }
 
             return {
-                success: 'success' === json.status,
+                success: json.success || false,
                 data: content,
+                error: json.data && json.data.message ? json.data.message : null,
             };
         }).catch( (error) => {
             console.log( 'Fetch Error', error );
 
+            const errorMessage = error.message || 'Failed to fetch URL metadata.';
+            document.dispatchEvent( new CustomEvent( 'vlp-external-url-error', { detail: { message: errorMessage } } ) );
+
             return {
                 success: false,
                 data: {},
+                error: errorMessage,
             };
         });
     },

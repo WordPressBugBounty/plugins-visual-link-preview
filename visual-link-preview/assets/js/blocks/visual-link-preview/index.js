@@ -60,6 +60,10 @@ registerBlockType( 'visual-link-preview/link', {
 			type: 'string',
 			default: '',
 		},
+		provider_used: {
+			type: 'string',
+			default: '',
+		},
 		template: {
 			type: 'string',
 			default: 'use_default_from_settings',

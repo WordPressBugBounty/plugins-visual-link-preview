@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Visual Link Preview\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-30 08:16+0000\n"
+"POT-Creation-Date: 2026-01-19 10:28+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -16,7 +16,12 @@ msgstr ""
 "X-Loco-Version: 2.5.2; wp-5.7\n"
 "X-Domain: visual-link-preview"
 
-#: templates/settings/settings.php:243
+#: includes/admin/providers/class-vlp-url-provider-manager.php:116
+#, php-format
+msgid "%s: %s"
+msgstr ""
+
+#: templates/settings/settings.php:278
 msgid "Advanced"
 msgstr ""
 
@@ -64,8 +69,20 @@ msgstr ""
 msgid "Center"
 msgstr ""
 
+#: templates/settings/settings.php:284
+msgid "Choose how visual links should be rendered inside RSS feeds."
+msgstr ""
+
+#: templates/elementor/widget-link.php:162
+msgid "Click and select a Visual Link Preview in the sidebar."
+msgstr ""
+
 #: templates/settings/settings.php:67
 msgid "Container"
+msgstr ""
+
+#: templates/elementor/widget-link.php:74
+msgid "Create visual link"
 msgstr ""
 
 #: templates/settings/settings.php:140
@@ -86,7 +103,7 @@ msgid ""
 "external link."
 msgstr ""
 
-#: includes/public/class-vlp-settings.php:50 templates/settings/settings.php:6
+#: includes/public/class-vlp-settings.php:64 templates/settings/settings.php:6
 msgid "Documentation"
 msgstr ""
 
@@ -112,12 +129,26 @@ msgid ""
 "flexibility and options. This is the recommended method to use."
 msgstr ""
 
+#: templates/elementor/widget-link.php:92
+msgid "Edit visual link"
+msgstr ""
+
+#: includes/admin/providers/class-vlp-url-provider-php.php:82
+msgid "Empty response from URL."
+msgstr ""
+
 #: templates/settings/settings.php:190
 msgid "Enter a thumbnail name or specific size."
 msgstr ""
 
 #: templates/settings/settings.php:143
 msgid "Groove"
+msgstr ""
+
+#: includes/admin/providers/class-vlp-url-provider-php.php:77 
+#: includes/admin/providers/class-vlp-url-provider-microlink.php:86 
+#: includes/admin/providers/class-vlp-url-provider-linkpreview.php:92
+msgid "HTTP error: %d"
 msgstr ""
 
 #. Author URI of the plugin
@@ -149,6 +180,19 @@ msgstr ""
 msgid "Inset"
 msgstr ""
 
+#: includes/admin/providers/class-vlp-url-provider-manager.php:100
+msgid "Invalid provider specified."
+msgstr ""
+
+#: includes/admin/providers/class-vlp-url-provider-manager.php:94 
+#: includes/admin/providers/class-vlp-url-provider-php.php:61 
+#: includes/admin/providers/class-vlp-url-provider-microlink.php:61 
+#: includes/admin/providers/class-vlp-url-provider-linkpreview.php:62 
+#: includes/admin/modal/class-vlp-modal.php:107 
+#: includes/admin/modal/class-vlp-modal.php:192
+msgid "Invalid URL provided."
+msgstr ""
+
 #: templates/settings/settings.php:76
 msgid "Leave blank to net set a max width."
 msgstr ""
@@ -157,19 +201,68 @@ msgstr ""
 msgid "Left"
 msgstr ""
 
+#: includes/admin/providers/class-vlp-url-provider-linkpreview.php:39
+msgid "LinkPreview"
+msgstr ""
+
+#: templates/settings/settings.php:268
+msgid "LinkPreview API Key"
+msgstr ""
+
+#: includes/admin/providers/class-vlp-url-provider-linkpreview.php:67
+msgid "LinkPreview API key not configured."
+msgstr ""
+
+#: includes/admin/providers/class-vlp-url-provider-linkpreview.php:99
+msgid "LinkPreview API returned an error."
+msgstr ""
+
 #: templates/settings/settings.php:75
 msgid "Max width"
 msgstr ""
 
-#: templates/settings/settings.php:248
+#: templates/settings/settings.php:243
+msgid "Metadata Providers"
+msgstr ""
+
+#: templates/settings/settings.php:244
+msgid ""
+"Metadata providers are used to fetch metadata for external URLs, such as "
+"title, summary, and image."
+msgstr ""
+
+#: includes/admin/providers/class-vlp-url-provider-microlink.php:39
+msgid "Microlink"
+msgstr ""
+
+#: templates/settings/settings.php:260
 msgid "Microlink API Key"
+msgstr ""
+
+#: includes/admin/providers/class-vlp-url-provider-microlink.php:93
+msgid "Microlink API returned an error."
+msgstr ""
+
+#: includes/admin/providers/class-vlp-url-provider-manager.php:157
+msgid "No available providers to fetch metadata."
+msgstr ""
+
+#: templates/settings/settings.php:251
+#, php-format
+msgid ""
+"One provider ID per line (%s). Order matters - providers are tried top to "
+"bottom."
 msgstr ""
 
 #: templates/settings/settings.php:44
 msgid "Open the Template Editor"
 msgstr ""
 
-#: templates/settings/settings.php:249
+#: templates/settings/settings.php:269
+msgid "Optionally add your linkpreview.net API key."
+msgstr ""
+
+#: templates/settings/settings.php:261
 msgid ""
 "Optionally add your microlink.io API key. Leave blank to use the free plan "
 "(limited number of requests per month)."
@@ -183,6 +276,11 @@ msgstr ""
 msgid "Padding"
 msgstr ""
 
+#: includes/admin/providers/class-vlp-url-provider-manager.php:105
+#, php-format
+msgid "Provider \"%s\" is not available."
+msgstr ""
+
 #: templates/settings/settings.php:144
 msgid "Ridge"
 msgstr ""
@@ -191,16 +289,28 @@ msgstr ""
 msgid "Right"
 msgstr ""
 
-#: includes/admin/class-vlp-assets.php:56
+#: templates/settings/settings.php:283
+msgid "RSS Feed Output"
+msgstr ""
+
+#: includes/admin/class-vlp-assets.php:65
 msgid "Select or Upload Image"
+msgstr ""
+
+#: includes/admin/providers/class-vlp-url-provider-php.php:39
+msgid "Self-hosted (PHP)"
 msgstr ""
 
 #: templates/settings/settings.php:129
 msgid "Set to 0 to not use a border."
 msgstr ""
 
-#: includes/public/class-vlp-settings.php:49
+#: includes/public/class-vlp-settings.php:63
 msgid "Settings"
+msgstr ""
+
+#: templates/settings/settings.php:288
+msgid "Simple URL"
 msgstr ""
 
 #: templates/settings/settings.php:139
@@ -264,16 +374,28 @@ msgstr ""
 msgid "Top"
 msgstr ""
 
+#: templates/elementor/widget-link.php:125
+msgid "Unset visual link"
+msgstr ""
+
 #: includes/public/class-vlp-template-editor.php:123
 msgid "URL"
+msgstr ""
+
+#: templates/settings/settings.php:249
+msgid "URL Provider Order"
 msgstr ""
 
 #: templates/settings/settings.php:59
 msgid "Use Custom Styling"
 msgstr ""
 
-#: includes/admin/class-vlp-assets.php:57
+#: includes/admin/class-vlp-assets.php:66
 msgid "Use Image"
+msgstr ""
+
+#: templates/elementor/control.php:54
+msgid "Use the buttons above to create or edit a visual link preview."
 msgstr ""
 
 #: templates/settings/settings.php:7
@@ -283,6 +405,9 @@ msgid ""
 msgstr ""
 
 #. Name of the plugin
+#: includes/public/class-vlp-compatibility.php:99 
+#: templates/settings/settings.php:287 templates/elementor/widget-link.php:26 
+#: templates/elementor/widget-link.php:65
 msgid "Visual Link Preview"
 msgstr ""
 

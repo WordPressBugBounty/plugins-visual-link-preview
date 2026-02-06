@@ -88,6 +88,33 @@ export default class extends Component {
         });
     }
 
+    fetchUrlMetadata(providerId = null) {
+        const { attributes, setAttributes } = this.props;
+        const url = attributes.url;
+
+        if ( ! url ) {
+            return;
+        }
+
+        this.setState({
+            gettingContent: true,
+        }, () => {
+            Api.old.getContentFromUrl( url, providerId ).then(
+                ({ data, error }) => {
+                    if ( ! error && data ) {
+                        setAttributes({
+                            ...data,
+                        });
+                    }
+
+                    setTimeout( () => {
+                        this.setState( { gettingContent: false } );
+                    }, 1000 );
+                }
+            );
+        });
+    }
+
     render() {
         const { className } = this.props;
 

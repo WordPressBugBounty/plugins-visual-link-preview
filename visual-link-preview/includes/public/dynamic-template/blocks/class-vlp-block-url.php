@@ -53,7 +53,7 @@ class VLP_Block_Url extends VLP_Dynamic_Template_Block {
 			$tag = $this->prop( 'tag', 'div' );
 
 			$html .= '<div class="' . esc_attr( $this->block_class() ) . ' vlp-link-url">';
-			$html .= $url_output;
+			$html .= esc_html( $url_output );
 			$html .= '</div>';
 		}
 

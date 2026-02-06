@@ -16,6 +16,7 @@ export default class Modal extends Component {
             isOpen: false,
             isUpdating: false,
             needPreviewUpdate: false,
+            saveCallback: false,
         };
     }
 
@@ -31,7 +32,9 @@ export default class Modal extends Component {
                 title: '',
                 summary: '',
                 template: 'use_default_from_settings',
-            }
+                provider_used: '',
+            },
+            saveCallback: false,
         });
     };
     
@@ -73,6 +76,7 @@ export default class Modal extends Component {
         let nextState = {
             editorId,
             isOpen: true,
+            saveCallback: args.saveCallback ? args.saveCallback : false,
         };
 
         if (args.encoded) {
@@ -91,6 +95,12 @@ export default class Modal extends Component {
         const encoded = this.getEncodedLink();
         const shortcode = '[visual-link-preview encoded="' + encoded + '"]';
 
+        if (this.state.saveCallback) {
+            this.state.saveCallback(encoded, this.state.link);
+            this.close();
+            return;
+        }
+
         if (this.state.isUpdating) {
             this.props.replaceShortcodeInEditor(this.state.editorId, this.state.shortcodeId, shortcode);
         } else {
@@ -108,6 +118,7 @@ export default class Modal extends Component {
             isOpen: false,
             isUpdating: false,
             needPreviewUpdate: true,
+            saveCallback: false,
         });
     }
 

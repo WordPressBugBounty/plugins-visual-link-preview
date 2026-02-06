@@ -81,6 +81,10 @@ class VLP_Shortcode {
 						'type' => 'string',
 						'default' => '',
 					),
+					'provider_used' => array(
+						'type' => 'string',
+						'default' => '',
+					),
 					'template' => array(
 						'type' => 'string',
 						'default' => 'use_default_from_settings',

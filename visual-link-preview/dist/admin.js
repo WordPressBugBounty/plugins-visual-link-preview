@@ -1476,6 +1476,7 @@ var ajaxNonce = undefined === window.vlp_admin ? vlp_blocks.nonce : vlp_admin.no
     }
   },
   getContentFromPost: function getContentFromPost(postId) {
+    document.dispatchEvent(new CustomEvent('vlp-external-url-start'));
     return fetch(ajaxUrl, {
       method: 'POST',
       credentials: 'same-origin',
@@ -1490,58 +1491,78 @@ var ajaxNonce = undefined === window.vlp_admin ? vlp_blocks.nonce : vlp_admin.no
       });
     });
   },
-  getContentFromUrl: function getContentFromUrl(url) {
+  getContentFromUrl: function getContentFromUrl(url, provider) {
     var content = {};
 
     // Check if valid URL.
     try {
       var testIfValidURL = new URL(url);
     } catch (e) {
+      document.dispatchEvent(new CustomEvent('vlp-external-url-error', {
+        detail: {
+          message: 'Invalid URL format.'
+        }
+      }));
       return Promise.resolve({
         success: false,
-        data: content
+        data: content,
+        error: 'Invalid URL format.'
       });
     }
-    var endpoint = 'https://api.microlink.io';
-    var headers = {};
-    if ('' !== vlp_admin.microlink_api_key) {
-      endpoint = 'https://pro.microlink.io';
-      headers['x-api-key'] = vlp_admin.microlink_api_key;
-    }
 
-    // Valid URL, use OpenGraph API.
-    return fetch(endpoint + '?url=' + encodeURIComponent(url), {
-      headers: headers
+    // Use server-side AJAX handler.
+    var ajaxUrl = undefined === window.vlp_admin ? vlp_blocks.ajax_url : vlp_admin.ajax_url;
+    var ajaxNonce = undefined === window.vlp_admin ? vlp_blocks.nonce : vlp_admin.nonce;
+    var body = 'action=vlp_get_url_content&security=' + ajaxNonce + '&url=' + encodeURIComponent(url);
+    if (provider) {
+      body += '&provider=' + encodeURIComponent(provider);
+    }
+    return fetch(ajaxUrl, {
+      method: 'POST',
+      credentials: 'same-origin',
+      body: body,
+      headers: {
+        'Accept': 'application/json, text/plain, */*',
+        'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
+      }
     }).then(function (response) {
       return response.json();
     }).then(function (json) {
-      if ('success' === json.status) {
-        if (json.data.title) {
-          content.title = json.data.title;
-        }
-        if (json.data.description) {
-          content.summary = json.data.description;
-        }
-        if (json.data.image && json.data.image.url) {
-          content.image_id = -1;
-          content.image_url = json.data.image.url;
-        }
+      if (json.success && json.data) {
+        content = json.data.data || {};
+        content.provider_used = json.data.provider_used || '';
         document.dispatchEvent(new CustomEvent('vlp-external-url-data', {
           detail: {
             json: json,
             content: content
           }
         }));
+      } else {
+        // Dispatch error event for error handling.
+        var errorMessage = json.data && json.data.message ? json.data.message : 'Failed to fetch URL metadata.';
+        document.dispatchEvent(new CustomEvent('vlp-external-url-error', {
+          detail: {
+            message: errorMessage
+          }
+        }));
       }
       return {
-        success: 'success' === json.status,
-        data: content
+        success: json.success || false,
+        data: content,
+        error: json.data && json.data.message ? json.data.message : null
       };
     }).catch(function (error) {
       console.log('Fetch Error', error);
+      var errorMessage = error.message || 'Failed to fetch URL metadata.';
+      document.dispatchEvent(new CustomEvent('vlp-external-url-error', {
+        detail: {
+          message: errorMessage
+        }
+      }));
       return {
         success: false,
-        data: {}
+        data: {},
+        error: errorMessage
       };
     });
   },
@@ -8979,29 +9000,235 @@ FieldType.propTypes = {
 };
 /* harmony default export */ const field_type = (FieldType);
 ;// CONCATENATED MODULE: ./visual-link-preview/assets/js/admin/form/field-url.js
+function field_url_typeof(obj) { "@babel/helpers - typeof"; return field_url_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, field_url_typeof(obj); }
+function field_url_classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function field_url_defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, field_url_toPropertyKey(descriptor.key), descriptor); } }
+function field_url_createClass(Constructor, protoProps, staticProps) { if (protoProps) field_url_defineProperties(Constructor.prototype, protoProps); if (staticProps) field_url_defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+function field_url_toPropertyKey(arg) { var key = field_url_toPrimitive(arg, "string"); return field_url_typeof(key) === "symbol" ? key : String(key); }
+function field_url_toPrimitive(input, hint) { if (field_url_typeof(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (field_url_typeof(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
+function field_url_inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); Object.defineProperty(subClass, "prototype", { writable: false }); if (superClass) field_url_setPrototypeOf(subClass, superClass); }
+function field_url_setPrototypeOf(o, p) { field_url_setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return field_url_setPrototypeOf(o, p); }
+function field_url_createSuper(Derived) { var hasNativeReflectConstruct = field_url_isNativeReflectConstruct(); return function _createSuperInternal() { var Super = field_url_getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = field_url_getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return field_url_possibleConstructorReturn(this, result); }; }
+function field_url_possibleConstructorReturn(self, call) { if (call && (field_url_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return field_url_assertThisInitialized(self); }
+function field_url_assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+function field_url_isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+function field_url_getPrototypeOf(o) { field_url_getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return field_url_getPrototypeOf(o); }
 
 
-var FieldUrl = function FieldUrl(props) {
-  return /*#__PURE__*/react.createElement("div", {
-    className: "vlp-form-line vlp-link-type-external"
-  }, /*#__PURE__*/react.createElement("div", {
-    className: "vlp-form-label"
-  }, /*#__PURE__*/react.createElement("label", {
-    htmlFor: "vlp-link-url"
-  }, "Link")), /*#__PURE__*/react.createElement("div", {
-    className: "vlp-form-input"
-  }, /*#__PURE__*/react.createElement("input", {
-    type: "text",
-    id: "vlp-link-url",
-    value: props.value,
-    onChange: props.onChangeField
-  })), /*#__PURE__*/react.createElement("div", {
-    className: "vlp-form-description"
-  }, "URL to link to."));
-};
+var FieldUrl = /*#__PURE__*/function (_Component) {
+  field_url_inherits(FieldUrl, _Component);
+  var _super = field_url_createSuper(FieldUrl);
+  function FieldUrl(props) {
+    var _this;
+    field_url_classCallCheck(this, FieldUrl);
+    _this = _super.call(this, props);
+    _this.state = {
+      isLoading: false,
+      error: null,
+      hasFetched: false
+    };
+    _this.handleUrlData = _this.handleUrlData.bind(field_url_assertThisInitialized(_this));
+    _this.handleUrlError = _this.handleUrlError.bind(field_url_assertThisInitialized(_this));
+    _this.handleUrlStart = _this.handleUrlStart.bind(field_url_assertThisInitialized(_this));
+    _this.handleUrlChange = _this.handleUrlChange.bind(field_url_assertThisInitialized(_this));
+    _this.handleRetryWithProvider = _this.handleRetryWithProvider.bind(field_url_assertThisInitialized(_this));
+    return _this;
+  }
+  field_url_createClass(FieldUrl, [{
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      // Listen for URL fetch events to update loading state.
+      document.addEventListener('vlp-external-url-data', this.handleUrlData);
+      document.addEventListener('vlp-external-url-error', this.handleUrlError);
+      document.addEventListener('vlp-external-url-start', this.handleUrlStart);
+
+      // Sync hasFetched with providerUsed prop
+      if (this.props.providerUsed) {
+        this.setState({
+          hasFetched: true
+        });
+      }
+    }
+  }, {
+    key: "componentDidUpdate",
+    value: function componentDidUpdate(prevProps) {
+      // Reset hasFetched when providerUsed is cleared
+      if (prevProps.providerUsed && !this.props.providerUsed) {
+        this.setState({
+          hasFetched: false
+        });
+      }
+      // Set hasFetched when providerUsed is set
+      if (!prevProps.providerUsed && this.props.providerUsed) {
+        this.setState({
+          hasFetched: true
+        });
+      }
+    }
+  }, {
+    key: "componentWillUnmount",
+    value: function componentWillUnmount() {
+      document.removeEventListener('vlp-external-url-data', this.handleUrlData);
+      document.removeEventListener('vlp-external-url-error', this.handleUrlError);
+      document.removeEventListener('vlp-external-url-start', this.handleUrlStart);
+    }
+  }, {
+    key: "handleUrlData",
+    value: function handleUrlData() {
+      this.setState({
+        isLoading: false,
+        error: null,
+        hasFetched: true
+      });
+    }
+  }, {
+    key: "handleUrlStart",
+    value: function handleUrlStart() {
+      this.setState({
+        isLoading: true,
+        error: null
+      });
+    }
+  }, {
+    key: "handleUrlError",
+    value: function handleUrlError(e) {
+      var detail = e.detail || {};
+      var errorMessage = detail.message || 'Failed to fetch URL metadata.';
+      this.setState({
+        isLoading: false,
+        error: errorMessage,
+        hasFetched: true
+      });
+    }
+  }, {
+    key: "handleUrlChange",
+    value: function handleUrlChange(e) {
+      var url = e.target.value;
+      this.props.onChangeField(e);
+
+      // Reset state when URL changes.
+      if (!url) {
+        this.setState({
+          isLoading: false,
+          error: null,
+          hasFetched: false
+        });
+      } else {
+        this.setState({
+          error: null,
+          hasFetched: false
+        });
+      }
+    }
+  }, {
+    key: "handleRetryWithProvider",
+    value: function handleRetryWithProvider(e) {
+      var providerId = e.target.value;
+      if (!providerId) {
+        return;
+      }
+
+      // Reset dropdown.
+      e.target.value = '';
+      this.setState({
+        isLoading: true,
+        error: null
+      });
+      if (this.props.onRetryWithProvider) {
+        this.props.onRetryWithProvider(providerId);
+      }
+    }
+  }, {
+    key: "getProviderName",
+    value: function getProviderName(providerId) {
+      if (!window.vlp_admin || !window.vlp_admin.url_providers) {
+        return providerId;
+      }
+      var provider = window.vlp_admin.url_providers.find(function (p) {
+        return p.id === providerId;
+      });
+      return provider ? provider.name : providerId;
+    }
+  }, {
+    key: "getAvailableProviders",
+    value: function getAvailableProviders() {
+      if (!window.vlp_admin || !window.vlp_admin.url_providers) {
+        return [];
+      }
+      return window.vlp_admin.url_providers.filter(function (p) {
+        return p.available;
+      });
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      var _this$props = this.props,
+        value = _this$props.value,
+        providerUsed = _this$props.providerUsed;
+      var _this$state = this.state,
+        isLoading = _this$state.isLoading,
+        error = _this$state.error,
+        hasFetched = _this$state.hasFetched;
+      var availableProviders = this.getAvailableProviders();
+      var hasUrl = value && value.trim() !== '';
+      return /*#__PURE__*/react.createElement(react.Fragment, null, /*#__PURE__*/react.createElement("div", {
+        className: "vlp-form-line vlp-link-type-external"
+      }, /*#__PURE__*/react.createElement("div", {
+        className: "vlp-form-label"
+      }, /*#__PURE__*/react.createElement("label", {
+        htmlFor: "vlp-link-url"
+      }, "Link")), /*#__PURE__*/react.createElement("div", {
+        className: "vlp-form-input"
+      }, /*#__PURE__*/react.createElement("input", {
+        type: "text",
+        id: "vlp-link-url",
+        value: value,
+        onChange: this.handleUrlChange
+      })), /*#__PURE__*/react.createElement("div", {
+        className: "vlp-form-description"
+      }, "URL to link to.")), hasUrl && /*#__PURE__*/react.createElement("div", {
+        className: "vlp-form-line vlp-url-provider-line"
+      }, /*#__PURE__*/react.createElement("div", {
+        className: "vlp-form-label"
+      }), /*#__PURE__*/react.createElement("div", {
+        className: "vlp-form-input"
+      }, /*#__PURE__*/react.createElement("div", {
+        className: "vlp-url-provider-status"
+      }, !hasFetched && !isLoading && /*#__PURE__*/react.createElement("button", {
+        type: "button",
+        className: "button",
+        onClick: this.props.onFetchDetails
+      }, "Automatically fetch details"), isLoading && /*#__PURE__*/react.createElement("div", {
+        className: "vlp-provider-loading"
+      }, "Fetching..."), !isLoading && hasFetched && providerUsed && /*#__PURE__*/react.createElement("div", {
+        className: "vlp-provider-used"
+      }, "Fetched using: ", /*#__PURE__*/react.createElement("strong", null, this.getProviderName(providerUsed))), !isLoading && hasFetched && error && /*#__PURE__*/react.createElement("div", {
+        className: "vlp-provider-error"
+      }, error), !isLoading && hasFetched && hasUrl && availableProviders.length > 1 && /*#__PURE__*/react.createElement("div", {
+        className: "vlp-provider-retry"
+      }, /*#__PURE__*/react.createElement("select", {
+        onChange: this.handleRetryWithProvider,
+        defaultValue: ""
+      }, /*#__PURE__*/react.createElement("option", {
+        value: ""
+      }, "Retry with different provider..."), availableProviders.map(function (provider) {
+        return /*#__PURE__*/react.createElement("option", {
+          key: provider.id,
+          value: provider.id
+        }, provider.name);
+      }))))), /*#__PURE__*/react.createElement("div", {
+        className: "vlp-form-description"
+      })));
+    }
+  }]);
+  return FieldUrl;
+}(react.Component);
 FieldUrl.propTypes = {
   value: (prop_types_default()).string.isRequired,
-  onChangeField: (prop_types_default()).func.isRequired
+  onChangeField: (prop_types_default()).func.isRequired,
+  providerUsed: (prop_types_default()).string,
+  onRetryWithProvider: (prop_types_default()).func,
+  onFetchDetails: (prop_types_default()).func.isRequired
 };
 /* harmony default export */ const field_url = (FieldUrl);
 ;// CONCATENATED MODULE: ./visual-link-preview/assets/js/admin/form/preview.js
@@ -9134,33 +9361,75 @@ var Form = /*#__PURE__*/function (_Component) {
   form_inherits(Form, _Component);
   var _super = form_createSuper(Form);
   function Form(props) {
+    var _this;
     form_classCallCheck(this, Form);
-    return _super.call(this, props);
+    _this = _super.call(this, props);
+    _this.urlFetchTimeout = null;
+    return _this;
   }
   form_createClass(Form, [{
     key: "onChangePost",
     value: function onChangePost(option) {
-      var _this = this;
+      var _this2 = this;
       this.props.onUpdateLink({
         post: option.id,
         post_label: option.text
       });
       Api.old.getContentFromPost(option.id).then(function (_ref) {
         var data = _ref.data;
-        _this.props.onUpdateLink(form_objectSpread({}, data));
+        _this2.props.onUpdateLink(form_objectSpread({}, data));
       });
     }
   }, {
     key: "onChangeURL",
     value: function onChangeURL(e) {
-      var _this2 = this;
       var url = e.target.value;
       this.props.onUpdateField('url', url);
 
-      // TODO Debounce.
-      Api.old.getContentFromUrl(url).then(function (_ref2) {
-        var data = _ref2.data;
-        _this2.props.onUpdateLink(form_objectSpread({}, data));
+      // Reset provider_used when URL changes (only if it was previously set)
+      if (this.props.link.provider_used) {
+        this.props.onUpdateField('provider_used', '');
+      }
+    }
+  }, {
+    key: "onRetryWithProvider",
+    value: function onRetryWithProvider(providerId) {
+      var url = this.props.link.url;
+      if (!url) {
+        return;
+      }
+      if (this.urlFetchTimeout) {
+        clearTimeout(this.urlFetchTimeout);
+      }
+      this.fetchUrlMetadata(url, providerId);
+    }
+  }, {
+    key: "onFetchDetails",
+    value: function onFetchDetails() {
+      var url = this.props.link.url;
+      if (!url) {
+        return;
+      }
+      if (this.urlFetchTimeout) {
+        clearTimeout(this.urlFetchTimeout);
+      }
+      this.fetchUrlMetadata(url);
+    }
+  }, {
+    key: "fetchUrlMetadata",
+    value: function fetchUrlMetadata(url) {
+      var _this3 = this;
+      var providerId = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+      Api.old.getContentFromUrl(url, providerId).then(function (_ref2) {
+        var data = _ref2.data,
+          error = _ref2.error;
+        if (error) {
+          _this3.props.onUpdateLink(form_objectSpread(form_objectSpread({}, data), {}, {
+            provider_used: ''
+          }));
+        } else {
+          _this3.props.onUpdateLink(form_objectSpread({}, data));
+        }
       });
     }
   }, {
@@ -9172,9 +9441,16 @@ var Form = /*#__PURE__*/function (_Component) {
       });
     }
   }, {
+    key: "componentWillUnmount",
+    value: function componentWillUnmount() {
+      if (this.urlFetchTimeout) {
+        clearTimeout(this.urlFetchTimeout);
+      }
+    }
+  }, {
     key: "render",
     value: function render() {
-      var _this3 = this;
+      var _this4 = this;
       var post_option = {
         id: this.props.link.post,
         text: this.props.link.post_label
@@ -9186,7 +9462,7 @@ var Form = /*#__PURE__*/function (_Component) {
       }, /*#__PURE__*/react.createElement(field_type, {
         value: this.props.link.type,
         onChangeField: function onChangeField(value) {
-          return _this3.props.onUpdateField('type', value);
+          return _this4.props.onUpdateField('type', value);
         }
       })), /*#__PURE__*/react.createElement("div", {
         className: "vlp-form-section"
@@ -9195,7 +9471,10 @@ var Form = /*#__PURE__*/function (_Component) {
         onChangeField: this.onChangePost.bind(this)
       }) : /*#__PURE__*/react.createElement(field_url, {
         value: this.props.link.url,
-        onChangeField: this.onChangeURL.bind(this)
+        onChangeField: this.onChangeURL.bind(this),
+        providerUsed: this.props.link.provider_used,
+        onRetryWithProvider: this.onRetryWithProvider.bind(this),
+        onFetchDetails: this.onFetchDetails.bind(this)
       }), this.props.link.type === 'external' || this.props.link.post > 0 ? [/*#__PURE__*/react.createElement(FieldImage, {
         value: this.props.link.image_id,
         url: this.props.link.image_url,
@@ -9204,13 +9483,13 @@ var Form = /*#__PURE__*/function (_Component) {
       }), /*#__PURE__*/react.createElement(field_title, {
         value: this.props.link.title,
         onChangeField: function onChangeField(e) {
-          return _this3.props.onUpdateField('title', e.target.value);
+          return _this4.props.onUpdateField('title', e.target.value);
         },
         key: 1
       }), /*#__PURE__*/react.createElement(field_summary, {
         value: this.props.link.summary,
         onChangeField: function onChangeField(e) {
-          return _this3.props.onUpdateField('summary', e.target.value);
+          return _this4.props.onUpdateField('summary', e.target.value);
         },
         key: 2
       })] : ''), /*#__PURE__*/react.createElement("div", {
@@ -9218,7 +9497,7 @@ var Form = /*#__PURE__*/function (_Component) {
       }, /*#__PURE__*/react.createElement(FieldTemplate, {
         value: this.props.link.template,
         onChangeField: function onChangeField(value) {
-          return _this3.props.onUpdateField('template', value);
+          return _this4.props.onUpdateField('template', value);
         }
       })), /*#__PURE__*/react.createElement(Preview, {
         link: this.props.link,
@@ -9272,7 +9551,8 @@ var Modal = /*#__PURE__*/function (_Component) {
       shortcodeId: 0,
       isOpen: false,
       isUpdating: false,
-      needPreviewUpdate: false
+      needPreviewUpdate: false,
+      saveCallback: false
     };
     return _this;
   }
@@ -9289,8 +9569,10 @@ var Modal = /*#__PURE__*/function (_Component) {
           image_url: '',
           title: '',
           summary: '',
-          template: 'use_default_from_settings'
-        }
+          template: 'use_default_from_settings',
+          provider_used: ''
+        },
+        saveCallback: false
       });
     }
   }, {
@@ -9334,7 +9616,8 @@ var Modal = /*#__PURE__*/function (_Component) {
       var args = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
       var nextState = {
         editorId: editorId,
-        isOpen: true
+        isOpen: true,
+        saveCallback: args.saveCallback ? args.saveCallback : false
       };
       if (args.encoded) {
         nextState.link = this.props.decodeLink(args.encoded);
@@ -9350,6 +9633,11 @@ var Modal = /*#__PURE__*/function (_Component) {
     value: function save() {
       var encoded = this.getEncodedLink();
       var shortcode = '[visual-link-preview encoded="' + encoded + '"]';
+      if (this.state.saveCallback) {
+        this.state.saveCallback(encoded, this.state.link);
+        this.close();
+        return;
+      }
       if (this.state.isUpdating) {
         this.props.replaceShortcodeInEditor(this.state.editorId, this.state.shortcodeId, shortcode);
       } else {
@@ -9366,7 +9654,8 @@ var Modal = /*#__PURE__*/function (_Component) {
         shortcodeId: 0,
         isOpen: false,
         isUpdating: false,
-        needPreviewUpdate: true
+        needPreviewUpdate: true,
+        saveCallback: false
       });
     }
   }, {

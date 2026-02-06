@@ -68,6 +68,7 @@ class VLP_Assets {
 			'post_types' => $post_types,
 			'settings_link' => admin_url( 'options-general.php?page=bv_settings_vlp' ),
 			'microlink_api_key' => VLP_Settings::get( 'microlink_api_key' ),
+			'url_providers' => VLP_Url_Provider_Manager::get_available_providers(),
 		));
 	}
 
@@ -86,6 +87,7 @@ class VLP_Assets {
 			'templates' => VLP_Template_Manager::get_templates(),
 			'edit_link' => admin_url( 'post.php?action=edit&post='),
 			'settings_link' => admin_url( 'options-general.php?page=bv_settings_vlp' ),
+			'url_providers' => VLP_Url_Provider_Manager::get_available_providers(),
 		));
 	}
 }

@@ -7755,6 +7755,7 @@ var ajaxNonce = undefined === window.vlp_admin ? vlp_blocks.nonce : vlp_admin.no
     }
   },
   getContentFromPost: function getContentFromPost(postId) {
+    document.dispatchEvent(new CustomEvent('vlp-external-url-start'));
     return fetch(ajaxUrl, {
       method: 'POST',
       credentials: 'same-origin',
@@ -7769,58 +7770,78 @@ var ajaxNonce = undefined === window.vlp_admin ? vlp_blocks.nonce : vlp_admin.no
       });
     });
   },
-  getContentFromUrl: function getContentFromUrl(url) {
+  getContentFromUrl: function getContentFromUrl(url, provider) {
     var content = {};
 
     // Check if valid URL.
     try {
       var testIfValidURL = new URL(url);
     } catch (e) {
+      document.dispatchEvent(new CustomEvent('vlp-external-url-error', {
+        detail: {
+          message: 'Invalid URL format.'
+        }
+      }));
       return Promise.resolve({
         success: false,
-        data: content
+        data: content,
+        error: 'Invalid URL format.'
       });
     }
-    var endpoint = 'https://api.microlink.io';
-    var headers = {};
-    if ('' !== vlp_admin.microlink_api_key) {
-      endpoint = 'https://pro.microlink.io';
-      headers['x-api-key'] = vlp_admin.microlink_api_key;
-    }
 
-    // Valid URL, use OpenGraph API.
-    return fetch(endpoint + '?url=' + encodeURIComponent(url), {
-      headers: headers
+    // Use server-side AJAX handler.
+    var ajaxUrl = undefined === window.vlp_admin ? vlp_blocks.ajax_url : vlp_admin.ajax_url;
+    var ajaxNonce = undefined === window.vlp_admin ? vlp_blocks.nonce : vlp_admin.nonce;
+    var body = 'action=vlp_get_url_content&security=' + ajaxNonce + '&url=' + encodeURIComponent(url);
+    if (provider) {
+      body += '&provider=' + encodeURIComponent(provider);
+    }
+    return fetch(ajaxUrl, {
+      method: 'POST',
+      credentials: 'same-origin',
+      body: body,
+      headers: {
+        'Accept': 'application/json, text/plain, */*',
+        'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
+      }
     }).then(function (response) {
       return response.json();
     }).then(function (json) {
-      if ('success' === json.status) {
-        if (json.data.title) {
-          content.title = json.data.title;
-        }
-        if (json.data.description) {
-          content.summary = json.data.description;
-        }
-        if (json.data.image && json.data.image.url) {
-          content.image_id = -1;
-          content.image_url = json.data.image.url;
-        }
+      if (json.success && json.data) {
+        content = json.data.data || {};
+        content.provider_used = json.data.provider_used || '';
         document.dispatchEvent(new CustomEvent('vlp-external-url-data', {
           detail: {
             json: json,
             content: content
           }
         }));
+      } else {
+        // Dispatch error event for error handling.
+        var errorMessage = json.data && json.data.message ? json.data.message : 'Failed to fetch URL metadata.';
+        document.dispatchEvent(new CustomEvent('vlp-external-url-error', {
+          detail: {
+            message: errorMessage
+          }
+        }));
       }
       return {
-        success: 'success' === json.status,
-        data: content
+        success: json.success || false,
+        data: content,
+        error: json.data && json.data.message ? json.data.message : null
       };
     }).catch(function (error) {
       console.log('Fetch Error', error);
+      var errorMessage = error.message || 'Failed to fetch URL metadata.';
+      document.dispatchEvent(new CustomEvent('vlp-external-url-error', {
+        detail: {
+          message: errorMessage
+        }
+      }));
       return {
         success: false,
-        data: {}
+        data: {},
+        error: errorMessage
       };
     });
   },

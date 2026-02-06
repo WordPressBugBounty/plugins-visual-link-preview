@@ -3,8 +3,8 @@ Contributors: BrechtVds
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=QG7KZMGFU325Y
 Tags: link preview, snippet, summary, visual link
 Requires at least: 4.4
-Tested up to: 6.8
-Stable tag: 2.2.7
+Tested up to: 6.9
+Stable tag: 2.3.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -56,6 +56,21 @@ Yes! We pride ourselves on offering awesome support and almost always answer sup
 4. Link to your own posts or to any external URL
 
 == Changelog ==
+= 2.3.0 =
+* Feature: Elementor Widget for visual links
+* Feature: Use PHP to retrieve URL metadata
+* Feature: Use LinkPreview API to retrieve URL metadata
+* Feature: Automatic fallback to different provider
+* Feature: Manually retry using a different provider
+* Fix: Only show posts in search and summary that the current user is allowed to read
+
+= 2.2.9 =
+* Improvement: Choose how visual links should render inside RSS feeds
+
+= 2.2.8 =
+* Fix: Prevent potential misuse of shortcode by authors
+* Fix: Only output link in RSS feed
+
 = 2.2.7 =
 * Improvement: WordPress 6.8 compatibility
 * Fix: Loading translations too early
@@ -155,6 +170,15 @@ Yes! We pride ourselves on offering awesome support and almost always answer sup
 * Very first version of this link preview plugin
 
 == Upgrade notice ==
+= 2.3.0 =
+Some great new features and improvements
+
+= 2.2.9 =
+New setting to control RSS feed output for visual links
+
+= 2.2.8 =
+Fixed potential security problem
+
 = 2.2.7 =
 Update to ensure compatibility with WordPress 6.8
 

@@ -95,6 +95,11 @@ class VLP_Api_Block {
             $query_posts = $query->posts;
 
             foreach( $query_posts as $post ) {
+                // Only include posts the user has permission to read.
+                if ( ! current_user_can( 'read_post', $post->ID ) ) {
+                    continue;
+                }
+
                 $post_type = get_post_type_object( $post->post_type );
 
                 $posts[] = array(

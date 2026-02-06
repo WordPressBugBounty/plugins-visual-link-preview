@@ -21,10 +21,85 @@ if ( wp.hasOwnProperty( 'blockEditor' ) ) {
 }
 
 import ImageSelect from './ImageSelect';
+import Api from '../../../shared/Api';
 
 export default class extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            isLoading: false,
+        };
+        this.handleUrlData = this.handleUrlData.bind(this);
+        this.handleUrlError = this.handleUrlError.bind(this);
+        this.handleUrlStart = this.handleUrlStart.bind(this);
+    }
+
+    componentDidMount() {
+        document.addEventListener('vlp-external-url-data', this.handleUrlData);
+        document.addEventListener('vlp-external-url-error', this.handleUrlError);
+        document.addEventListener('vlp-external-url-start', this.handleUrlStart);
+    }
+
+    componentWillUnmount() {
+        document.removeEventListener('vlp-external-url-data', this.handleUrlData);
+        document.removeEventListener('vlp-external-url-error', this.handleUrlError);
+        document.removeEventListener('vlp-external-url-start', this.handleUrlStart);
+    }
+
+    handleUrlData() {
+        this.setState({ isLoading: false });
+    }
+
+    handleUrlStart() {
+        this.setState({ isLoading: true });
+    }
+
+    handleUrlError() {
+        this.setState({ isLoading: false });
+    }
+
+    getProviderName(providerId) {
+        if ( ! window.vlp_blocks || ! window.vlp_blocks.url_providers ) {
+            return providerId;
+        }
+
+        const provider = window.vlp_blocks.url_providers.find(p => p.id === providerId);
+        return provider ? provider.name : providerId;
+    }
+
+    getAvailableProviders() {
+        if ( ! window.vlp_blocks || ! window.vlp_blocks.url_providers ) {
+            return [];
+        }
+
+        return window.vlp_blocks.url_providers.filter(p => p.available);
+    }
+
+    fetchUrlMetadata(providerId = null) {
+        const { attributes, setAttributes } = this.props;
+        const url = attributes.url;
+
+        if ( ! url ) {
+            return;
+        }
+
+        Api.old.getContentFromUrl( url, providerId ).then(
+            ({ data, error }) => {
+                if ( ! error && data ) {
+                    setAttributes({
+                        ...data,
+                    });
+                }
+            }
+        );
+    }
+
     render() {
         const { attributes, setAttributes } = this.props;
+        const { isLoading } = this.state;
+        const availableProviders = this.getAvailableProviders();
+        const hasUrl = attributes.url && attributes.url.trim() !== '';
+        const hasFetched = attributes.provider_used && attributes.provider_used.trim() !== '';
 
         const changeLinkButton = (
             <div style={{ marginTop: 15 }}>
@@ -34,6 +109,7 @@ export default class extends Component {
                         setAttributes({
                             type: false,
                             post: 0,
+                            provider_used: '',
                         });
                     }}
                 >Change Link</Button>
@@ -65,6 +141,46 @@ export default class extends Component {
                         <a href={ attributes.url } target="_blank"> { attributes.url }</a>
                         { changeLinkButton }
                     </PanelBody>
+                }
+                {
+                    'external' === attributes.type && hasUrl && (
+                        <PanelBody title={ __( 'Metadata Provider' ) }>
+                            {!hasFetched && !isLoading && (
+                                <Button
+                                    variant="primary"
+                                    onClick={() => this.fetchUrlMetadata()}
+                                >
+                                    { __( 'Automatically fetch details' ) }
+                                </Button>
+                            )}
+                            {isLoading && (
+                                <div>{ __( 'Fetching...' ) }</div>
+                            )}
+                            {!isLoading && hasFetched && attributes.provider_used && (
+                                <div style={{ marginBottom: 10 }}>
+                                    { __( 'Fetched using:' ) } <strong>{this.getProviderName(attributes.provider_used)}</strong>
+                                </div>
+                            )}
+                            {!isLoading && hasFetched && availableProviders.length > 1 && (
+                                <SelectControl
+                                    label={ __( 'Retry with different provider' ) }
+                                    value=""
+                                    options={[
+                                        { label: __( 'Select provider...' ), value: '' },
+                                        ...availableProviders.map(provider => ({
+                                            label: provider.name,
+                                            value: provider.id,
+                                        }))
+                                    ]}
+                                    onChange={ ( value ) => {
+                                        if ( value ) {
+                                            this.fetchUrlMetadata( value );
+                                        }
+                                    } }
+                                />
+                            )}
+                        </PanelBody>
+                    )
                 }
                 <PanelBody title={ __( 'Content' ) }>
                     <strong><PlainText
