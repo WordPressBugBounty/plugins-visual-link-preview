@@ -100,9 +100,8 @@ class VLP_Modal {
 			$url = isset( $_POST['url'] ) ? esc_url( wp_unslash( $_POST['url'] ) ) : ''; // Input var okay.
 			$url = str_replace( array( "\n", "\t", "\r" ), '', $url );
 
-			// Validate URL to prevent SSRF attacks - only allow http/https protocols.
-			$parsed_url = wp_parse_url( $url );
-			if ( ! $parsed_url || ! isset( $parsed_url['scheme'] ) || ! in_array( $parsed_url['scheme'], array( 'http', 'https' ), true ) ) {
+			// Validate URL to prevent SSRF attacks.
+			if ( ! VLP_Url_Provider_Manager::is_safe_remote_url( $url ) ) {
 				wp_send_json_error( array(
 					'message' => __( 'Invalid URL provided.', 'visual-link-preview' ),
 				) );
@@ -185,9 +184,8 @@ class VLP_Modal {
 			$url = isset( $_POST['url'] ) ? esc_url_raw( wp_unslash( $_POST['url'] ) ) : ''; // Input var okay.
 			$provider = isset( $_POST['provider'] ) ? sanitize_text_field( wp_unslash( $_POST['provider'] ) ) : ''; // Input var okay.
 
-			// Validate URL to prevent SSRF attacks - only allow http/https protocols.
-			$parsed_url = wp_parse_url( $url );
-			if ( ! $parsed_url || ! isset( $parsed_url['scheme'] ) || ! in_array( $parsed_url['scheme'], array( 'http', 'https' ), true ) ) {
+			// Validate URL to prevent SSRF attacks.
+			if ( ! VLP_Url_Provider_Manager::is_safe_remote_url( $url ) ) {
 				wp_send_json_error( array(
 					'message' => __( 'Invalid URL provided.', 'visual-link-preview' ),
 				) );

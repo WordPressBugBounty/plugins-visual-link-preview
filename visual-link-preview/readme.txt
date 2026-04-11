@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: link preview, snippet, summary, visual link
 Requires at least: 4.4
 Tested up to: 6.9
-Stable tag: 2.3.0
+Stable tag: 2.3.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -25,7 +25,9 @@ Some examples of what you could use this for:
 
 It does not require any database lookups, which means even having many of these blocks on a page should not affect performance.
 
-Compatible with both the Classic and Gutenberg Block Editor using shortcodes and blocks.
+Compatible with both the Classic and Gutenberg Block Editor using shortcodes and blocks. Also includes full Elementor support with a dedicated widget for easy integration into your Elementor pages.
+
+The plugin includes multiple URL metadata providers (PHP, Microlink API, and LinkPreview API) with automatic fallback switching. If one provider fails to fetch link information, the plugin automatically tries the next available provider. You can also manually retry with a different provider if needed.
 
 > <strong>Need help?</strong><br>
 > Check out [our documentation](https://help.bootstrapped.ventures/collection/164-visual-link-preview)!
@@ -39,7 +41,6 @@ This plugin is in active development. Feel free to contact us with any feature r
 3. Check out our [getting started documentation](https://help.bootstrapped.ventures/category/167-getting-started)
 
 == Frequently asked questions ==
-
 = Where can I find the documentation? =
 
 All documentation can be found in [our knowledge base](https://help.bootstrapped.ventures/collection/164-visual-link-preview).
@@ -47,6 +48,10 @@ All documentation can be found in [our knowledge base](https://help.bootstrapped
 = Do you offer any support? =
 
 Yes! We pride ourselves on offering awesome support and almost always answer support questions within 24 hours. Send us an email at [support@bootstrapped.ventures](mailto:support@bootstrapped.ventures) whenever you have a question or suggestion!
+
+= Where do I report security bugs found in this plugin? =
+
+Please report security bugs found in the source code of the plugin through the [Patchstack Vulnerability Disclosure Program](https://patchstack.com/database/vdp/140f9fd1-2409-4108-864e-d14e535718f4). The Patchstack team will assist you with verification, CVE assignment, and notify the developers of this plugin.
 
 == Screenshots ==
 
@@ -56,6 +61,9 @@ Yes! We pride ourselves on offering awesome support and almost always answer sup
 4. Link to your own posts or to any external URL
 
 == Changelog ==
+= 2.3.1 =
+* Fix: Harden external URL metadata and image fetch endpoints against authenticated SSRF attempts by blocking localhost, private/reserved IP ranges, and unsafe ports
+
 = 2.3.0 =
 * Feature: Elementor Widget for visual links
 * Feature: Use PHP to retrieve URL metadata
@@ -170,6 +178,9 @@ Yes! We pride ourselves on offering awesome support and almost always answer sup
 * Very first version of this link preview plugin
 
 == Upgrade notice ==
+= 2.3.1 =
+Security hardening update for external URL fetching
+
 = 2.3.0 =
 Some great new features and improvements
 

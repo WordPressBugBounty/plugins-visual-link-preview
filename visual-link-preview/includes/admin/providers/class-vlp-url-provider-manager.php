@@ -89,8 +89,7 @@ class VLP_Url_Provider_Manager {
 			self::init();
 		}
 		// Validate URL.
-		$parsed_url = wp_parse_url( $url );
-		if ( ! $parsed_url || ! isset( $parsed_url['scheme'] ) || ! in_array( $parsed_url['scheme'], array( 'http', 'https' ), true ) ) {
+		if ( ! self::is_safe_remote_url( $url ) ) {
 			return new WP_Error( 'invalid_url', __( 'Invalid URL provided.', 'visual-link-preview' ) );
 		}
 
@@ -155,6 +154,107 @@ class VLP_Url_Provider_Manager {
 		}
 
 		return new WP_Error( 'no_providers', __( 'No available providers to fetch metadata.', 'visual-link-preview' ) );
+	}
+
+	/**
+	 * Check if URL is safe for server-side requests.
+	 *
+	 * @since    2.3.1
+	 * @param    string $url URL to validate.
+	 * @return   bool True if URL appears safe.
+	 */
+	public static function is_safe_remote_url( $url ) {
+		$parsed_url = wp_parse_url( $url );
+		if ( ! $parsed_url || ! isset( $parsed_url['scheme'] ) || ! isset( $parsed_url['host'] ) ) {
+			return false;
+		}
+
+		$scheme = strtolower( $parsed_url['scheme'] );
+		if ( ! in_array( $scheme, array( 'http', 'https' ), true ) ) {
+			return false;
+		}
+
+		// Disallow URLs with user info.
+		if ( isset( $parsed_url['user'] ) || isset( $parsed_url['pass'] ) ) {
+			return false;
+		}
+
+		// Only allow standard HTTP(S) ports.
+		if ( isset( $parsed_url['port'] ) ) {
+			$port = intval( $parsed_url['port'] );
+			if ( ! in_array( $port, array( 80, 443 ), true ) ) {
+				return false;
+			}
+		}
+
+		$host = strtolower( trim( $parsed_url['host'], '[]' ) );
+		if ( '' === $host || 'localhost' === $host ) {
+			return false;
+		}
+
+		$localhost_suffix = '.localhost';
+		$suffix_length = strlen( $localhost_suffix );
+		if ( strlen( $host ) > $suffix_length && substr( $host, -$suffix_length ) === $localhost_suffix ) {
+			return false;
+		}
+
+		// Block direct IPs to private/reserved ranges.
+		if ( false !== filter_var( $host, FILTER_VALIDATE_IP ) ) {
+			return ! self::is_private_or_reserved_ip( $host );
+		}
+
+		// Block hostnames that resolve to private/reserved IPs.
+		return ! self::hostname_resolves_to_private_or_reserved_ip( $host );
+	}
+
+	/**
+	 * Check if IP is private or reserved.
+	 *
+	 * @since    2.3.1
+	 * @param    string $ip IP address.
+	 * @return   bool True if private or reserved.
+	 */
+	private static function is_private_or_reserved_ip( $ip ) {
+		return false === filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE );
+	}
+
+	/**
+	 * Check if hostname resolves to private or reserved IP.
+	 *
+	 * @since    2.3.1
+	 * @param    string $host Hostname.
+	 * @return   bool True if any resolved IP is private or reserved.
+	 */
+	private static function hostname_resolves_to_private_or_reserved_ip( $host ) {
+		if ( function_exists( 'dns_get_record' ) ) {
+			$records = dns_get_record( $host, DNS_A + DNS_AAAA );
+
+			if ( false !== $records && ! empty( $records ) ) {
+				foreach ( $records as $record ) {
+					$ip = '';
+
+					if ( isset( $record['ip'] ) ) {
+						$ip = $record['ip'];
+					} elseif ( isset( $record['ipv6'] ) ) {
+						$ip = $record['ipv6'];
+					}
+
+					if ( $ip && self::is_private_or_reserved_ip( $ip ) ) {
+						return true;
+					}
+				}
+
+				return false;
+			}
+		}
+
+		$resolved = gethostbyname( $host );
+		if ( $resolved && $resolved !== $host ) {
+			return self::is_private_or_reserved_ip( $resolved );
+		}
+
+		// Fail closed when hostname cannot be resolved.
+		return true;
 	}
 
 	/**

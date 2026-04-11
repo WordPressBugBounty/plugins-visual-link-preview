@@ -146,16 +146,12 @@ abstract class VLP_Url_Provider {
 	 * @return   bool True if valid URL.
 	 */
 	protected function is_valid_url( $url ) {
+		// Use centralized SSRF-safe validation when available.
+		if ( class_exists( 'VLP_Url_Provider_Manager' ) && is_callable( array( 'VLP_Url_Provider_Manager', 'is_safe_remote_url' ) ) ) {
+			return VLP_Url_Provider_Manager::is_safe_remote_url( $url );
+		}
+
 		$parsed_url = wp_parse_url( $url );
-		if ( ! $parsed_url || ! isset( $parsed_url['scheme'] ) || ! isset( $parsed_url['host'] ) ) {
-			return false;
-		}
-
-		// Only allow http/https protocols.
-		if ( ! in_array( $parsed_url['scheme'], array( 'http', 'https' ), true ) ) {
-			return false;
-		}
-
-		return true;
+		return $parsed_url && isset( $parsed_url['scheme'] ) && isset( $parsed_url['host'] ) && in_array( $parsed_url['scheme'], array( 'http', 'https' ), true );
 	}
 }

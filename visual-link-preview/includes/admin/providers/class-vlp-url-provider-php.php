@@ -62,10 +62,11 @@ class VLP_Url_Provider_PHP extends VLP_Url_Provider {
 		}
 
 		// Fetch HTML content.
-		$response = wp_remote_get( $url, array(
+		$response = wp_safe_remote_get( $url, array(
 			'timeout' => 10,
 			'user-agent' => 'Mozilla/5.0 (compatible; Visual Link Preview; +https://bootstrapped.ventures)',
 			'sslverify' => true,
+			'reject_unsafe_urls' => true,
 		) );
 
 		if ( is_wp_error( $response ) ) {
