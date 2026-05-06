@@ -42,29 +42,29 @@ export default class extends Component {
         }
     }
 
-    componentWillUpdate(nextProps) {
-        let link = Object.assign({}, nextProps.attributes);
+    componentDidUpdate(prevProps) {
+        let link = Object.assign({}, this.props.attributes);
         delete link.encoded;
 
         // Add class to link object.
-        link.custom_class = nextProps.className;
+        link.custom_class = this.props.className;
 
         const encoded = encodeLink(link);
 
-        if( nextProps.attributes.encoded !== encoded ) {
+        if( this.props.attributes.encoded !== encoded ) {
             this.props.setAttributes({
                 encoded,
             });
         }
 
-        let compareValue = this.props.attributes.type;
+        let compareValue = prevProps.attributes.type;
         if ( this.initialiazing ) {
             compareValue = this.initialType;
             this.initialiazing = false;
         }
 
-        if ( false === compareValue && compareValue !== nextProps.attributes.type ) {
-            this.getContent(nextProps.attributes);
+        if ( false === compareValue && compareValue !== this.props.attributes.type ) {
+            this.getContent(this.props.attributes);
         }
     }
 

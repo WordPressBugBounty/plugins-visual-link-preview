@@ -157,7 +157,7 @@ class FieldUrl extends Component {
                                 {!hasFetched && !isLoading && (
                                     <button
                                         type="button"
-                                        className="button"
+                                        className="button button-secondary button-compact"
                                         onClick={this.props.onFetchDetails}
                                     >
                                         Automatically fetch details

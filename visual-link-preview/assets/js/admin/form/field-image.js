@@ -65,7 +65,7 @@ export default class FieldImage extends Component {
                     this.props.value !== 0
                     ?
                     <div>
-                        <button type="button" id="vlp-link-image-remove" className="button" onClick={this.onRemoveImage.bind(this)}>Remove Image</button>
+                        <button type="button" id="vlp-link-image-remove" className="button button-secondary button-compact" onClick={this.onRemoveImage.bind(this)}>Remove Image</button>
                         {
                             this.props.value === -1 && this.props.url
                             ?
@@ -75,7 +75,7 @@ export default class FieldImage extends Component {
                         }
                     </div>
                     :
-                    <button type="button" id="vlp-link-image-add" className="button" onClick={this.onAddImage.bind(this)}>Add Image</button>
+                    <button type="button" id="vlp-link-image-add" className="button button-secondary button-compact" onClick={this.onAddImage.bind(this)}>Add Image</button>
                 }
                 </div>
                 <div className="vlp-form-description">Image for the preview.</div>

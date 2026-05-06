@@ -17,13 +17,25 @@
 
             var original_shortcode = window.encodeURIComponent(data);
             var link = VisualLinkPreview.admin.decodeLink(encoded[1]);
+            var escapeHtml = function(value) {
+                return String(value || '').replace(/[&<>"']/g, function(character) {
+                    return {
+                        '&': '&amp;',
+                        '<': '&lt;',
+                        '>': '&gt;',
+                        '"': '&quot;',
+                        "'": '&#039;'
+                    }[character];
+                });
+            };
+            var escapeAttr = escapeHtml;
 
-            var preview = '<div class="vlp-shortcode" style="display: block; cursor: pointer; margin: 5px; padding: 10px; border: 1px solid #999;" contentEditable="false" data-vlp-encoded="' + encoded[1] + '" data-vlp-shortcode-id="' + shortcode_id + '" data-vlp-shortcode="' + original_shortcode + '" data-mce-resize="false" data-mce-placeholder="1">';
+            var preview = '<div class="vlp-shortcode" style="display: block; cursor: pointer; margin: 5px; padding: 10px; border: 1px solid #999;" contentEditable="false" data-vlp-encoded="' + escapeAttr(encoded[1]) + '" data-vlp-shortcode-id="' + escapeAttr(shortcode_id) + '" data-vlp-shortcode="' + escapeAttr(original_shortcode) + '" data-mce-resize="false" data-mce-placeholder="1">';
             if(link.image_url) {
-                preview += '<span contentEditable="false" style="display: inline-block; float: left; margin: 0 10px 0 0;"><img src="' + link.image_url + '" style="width: 100px; height: auto;"></span>';
+                preview += '<span contentEditable="false" style="display: inline-block; float: left; margin: 0 10px 0 0;"><img src="' + escapeAttr(link.image_url) + '" style="width: 100px; height: auto;"></span>';
             }
-            preview += '<span contentEditable="false" style="font-weight: bold;">' + link.title + '</span><br/>';
-            preview += '<span contentEditable="false">' + link.summary + '</span>';
+            preview += '<span contentEditable="false" style="font-weight: bold;">' + escapeHtml(link.title) + '</span><br/>';
+            preview += '<span contentEditable="false">' + escapeHtml(link.summary) + '</span>';
             preview += '<span contentEditable="false" style="display: block; clear: both; height: 1px; line-height: 1px;">&nbsp;</span>';
             preview += '</div>';
 

@@ -3,7 +3,7 @@ import { stringify } from 'querystringify';
 const { __ } = wp.i18n;
 const { apiFetch } = wp;
 const { Component } = wp.element;
-const { Modal } = wp.components;
+const { Modal, Spinner } = wp.components;
 
 import Post from './Post';
 
@@ -11,23 +11,34 @@ class PostSelectModal extends Component {
 	constructor() {
 		super( ...arguments );
 
+        this.latestRequestId = 0;
+        this.isComponentMounted = false;
+
 		this.state = {
             postType: '',
             search: '',
             posts: [],
             updatingPosts: false,
-            needToUpdatePosts: false,
-		}
+            hasLoadedPosts: false,
+		};
+    }
+
+    componentDidMount() {
+        this.isComponentMounted = true;
+        this.updatePosts();
+    }
+
+    componentWillUnmount() {
+        this.isComponentMounted = false;
     }
 
     onChangePostType(event) {
         const postType = event.target.value;
 
         if ( postType !== this.state.postType ) {
-            this.setState({
+            this.setState( {
                 postType,
-                needToUpdatePosts: this.state.search.length >= 2, // Only update if there is text.
-            });
+            }, this.updatePosts.bind( this ) );
         }
     }
 
@@ -35,48 +46,69 @@ class PostSelectModal extends Component {
         const search = event.target.value;
 
         if ( search !== this.state.search ) {
-            this.setState({
+            this.setState( {
                 search,
-                needToUpdatePosts: true,
-            });
-        }
-    }
-
-    componentDidUpdate() {
-        if ( this.state.needToUpdatePosts ) {
-            this.updatePosts();
+            }, this.updatePosts.bind( this ) );
         }
     }
 
     updatePosts() {
-        if ( ! this.state.updatingPosts ) {
-            if ( this.state.search.length < 2 ) {
-                this.setState({
+        const requestId = ++this.latestRequestId;
+
+        this.setState( {
+            updatingPosts: true,
+        } );
+
+        apiFetch( {
+            path: `/visual-link-preview/v1/search?${ stringify( {
+                post_type: this.state.postType,
+                keyword: this.state.search,
+            } ) }`,
+        } ).then( ( posts ) => {
+            if ( this.isComponentMounted && requestId === this.latestRequestId ) {
+                this.setState( {
+                    posts,
                     updatingPosts: false,
-                    needToUpdatePosts: false,
-                    posts: [],
-                });
-            } else {
-                this.setState({
-                    updatingPosts: true,
-                    needToUpdatePosts: false,
-                });
-
-                const request = apiFetch( {
-                    path: `/visual-link-preview/v1/search?${ stringify( {
-                        post_type: this.state.postType,
-                        keyword: this.state.search,
-                    } ) }`,
-                } );
-
-                request.then( ( posts ) => {
-                    this.setState( {
-                        posts,
-                        updatingPosts: false,
-                    } );
+                    hasLoadedPosts: true,
                 } );
             }
+        } ).catch( () => {
+            if ( this.isComponentMounted && requestId === this.latestRequestId ) {
+                this.setState( {
+                    posts: [],
+                    updatingPosts: false,
+                    hasLoadedPosts: true,
+                } );
+            }
+        } );
+    }
+
+    renderPostsBody() {
+        const postRows = this.state.posts.map( ( post, index ) => (
+            <Post
+                post={ post }
+                selectPost={ this.props.selectPost }
+                key={ index }
+            />
+        ) );
+
+        if ( ! this.state.hasLoadedPosts ) {
+            return <tbody />;
         }
+
+        if ( 0 === this.state.posts.length ) {
+            return (
+                <tbody>
+                    <tr className="vlp-post-select-feedback">
+                        <td colSpan="5">
+                            <em>{ __( 'No posts found' ) }</em>
+                        </td>
+                    </tr>
+                </tbody>
+            );
+        }
+
+        return <tbody>{ postRows }</tbody>;
     }
 
 	render() {
@@ -103,50 +135,36 @@ class PostSelectModal extends Component {
                                 ) )
                             }
                         </select>
-                        <input
-                            autoFocus
-                            type="text"
-                            placeholder={ __( 'Start typing to search...' ) }
-                            className="vlp-post-select-search"
-                            value={ this.state.search }
-                            onChange={ this.onChangeSearch.bind(this) }
-                        />
+                        <div className="vlp-post-select-search-wrap">
+                            <input
+                                autoFocus
+                                type="text"
+                                placeholder={ __( 'Search posts...' ) }
+                                className="vlp-post-select-search"
+                                value={ this.state.search }
+                                onChange={ this.onChangeSearch.bind(this) }
+                            />
+                            { this.state.updatingPosts && (
+                                <span className="vlp-post-select-search-spinner">
+                                    <Spinner />
+                                </span>
+                            ) }
+                        </div>
                     </div>
-                    <table className="vlp-post-select-posts">
-                        <thead>
-                            <tr>
-                                <th>{ __( 'Post Type' ) }</th>
-                                <th>{ __( 'Date' ) }</th>
-                                <th>{ __( 'Title' ) }</th>
-                                <th>&nbsp;</th>
-                            </tr>
-                        </thead>
-                        {
-                            0 === this.state.posts.length
-                            ?
-                            <tbody>
+                    <div className={ `vlp-post-select-results${ this.state.updatingPosts ? ' is-loading' : '' }` }>
+                        <table className="vlp-post-select-posts">
+                            <thead>
                                 <tr>
-                                    <td colspan="4">
-                                        <em>{ __( 'No posts found' ) }</em>
-                                    </td>
+                                    <th className="vlp-post-select-col-thumbnail">&nbsp;</th>
+                                    <th className="vlp-post-select-col-type">{ __( 'Type' ) }</th>
+                                    <th className="vlp-post-select-col-date">{ __( 'Date' ) }</th>
+                                    <th className="vlp-post-select-col-title">{ __( 'Title' ) }</th>
+                                    <th className="vlp-post-select-col-action">&nbsp;</th>
                                 </tr>
-                            </tbody>
-                            :
-                            <tbody>
-                                {
-                                    this.state.posts.map( (post, index) => {
-                                        return (
-                                            <Post
-                                                post={ post }
-                                                selectPost={ this.props.selectPost }
-                                                key={ index }
-                                            />
-                                        )
-                                    })
-                                }
-                            </tbody>
-                        }
-                    </table>
+                            </thead>
+                            { this.renderPostsBody() }
+                        </table>
+                    </div>
                 </div>
             </Modal>
         );

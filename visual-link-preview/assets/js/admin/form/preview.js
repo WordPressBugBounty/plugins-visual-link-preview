@@ -19,9 +19,15 @@ export default class Preview extends Component {
         this.updatePreview();
     }
 
-    componentWillReceiveProps(nextProps) {
-        if (nextProps.needPreviewUpdate) {
-            this.updatePreview(nextProps.encoded);
+    componentDidUpdate(prevProps) {
+        if (
+            this.props.needPreviewUpdate
+            && (
+                ! prevProps.needPreviewUpdate
+                || prevProps.encoded !== this.props.encoded
+            )
+        ) {
+            this.updatePreview(this.props.encoded);
         }
     }
 

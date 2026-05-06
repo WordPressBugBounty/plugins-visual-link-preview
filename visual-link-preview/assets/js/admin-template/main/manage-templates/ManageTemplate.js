@@ -24,11 +24,11 @@ const ManageTemplate = (props) => {
                         ?
                         <Fragment>
                             <button
-                                className="button button-primary"
+                                className="button button-primary button-compact"
                                 onClick={ () => props.onChangeEditing(true) }
                             >Edit Template</button>
                             <button
-                                className="button button-primary"
+                                className="button button-primary button-compact"
                                 onClick={() => {
                                     const name = prompt( 'Choose a name for the cloned template' );
                                     
@@ -44,7 +44,7 @@ const ManageTemplate = (props) => {
                         </Fragment>
                         :
                         <button
-                            className="button button-primary"
+                            className="button button-primary button-compact"
                             onClick={() => {
                                 const name = prompt( 'Choose a name for the cloned template' );
                                 
@@ -70,11 +70,11 @@ const ManageTemplate = (props) => {
                         }}
                     >
                         <button
-                            className="button"
+                            className="button button-secondary button-compact"
                         >Export</button>
                     </CopyToClipboard>
                     <button
-                        className="button"
+                        className="button button-secondary button-compact"
                         onClick={() => {
                             const name = prompt( 'Choose a new name for this template', props.template.name );
                             
@@ -88,7 +88,7 @@ const ManageTemplate = (props) => {
                         disabled={ ! editable }
                     >Rename</button>
                     <button
-                        className="button"
+                        className="button button-secondary button-compact"
                         onClick={() => {
                             if (confirm( 'Are you sure you want to delete the "' + props.template.name + '" template?' )) {
                                 props.onDeleteTemplate(props.template.slug);

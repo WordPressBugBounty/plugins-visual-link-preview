@@ -20,6 +20,16 @@
     }
 }
 
+#vlp-template-editor {
+    input[type="text"],
+    input[type="number"],
+    select {
+        line-height: 2;
+        min-height: 30px;
+        padding: 0 5px;
+    }
+}
+
 #vlp-template-menu,
 .vlp-template-blocks,
 .vlp-template-properties,

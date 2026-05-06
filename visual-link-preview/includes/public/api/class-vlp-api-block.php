@@ -65,7 +65,7 @@ class VLP_Api_Block {
 	 */
 	public static function api_search( $request ) {
 		$post_type = sanitize_key( $request['post_type'] );
-        $keyword = sanitize_text_field( $request['keyword'] );
+        $keyword = sanitize_text_field( (string) $request['keyword'] );
 
         // Sanitize Post Type.
 		$all_post_types = get_post_types( array(
@@ -81,11 +81,20 @@ class VLP_Api_Block {
         }
 
         $args = array(
-            's' => $keyword,
             'post_type' => $post_type,
             'post_status' => 'any',
-            'posts_per_page' => 50,
+            'perm' => 'readable',
         );
+
+        if ( '' === $keyword ) {
+            $args['posts_per_page'] = 20;
+            $args['orderby'] = 'date';
+            $args['order'] = 'DESC';
+            $args['ignore_sticky_posts'] = true;
+        } else {
+            $args['s'] = $keyword;
+            $args['posts_per_page'] = 50;
+        }
 
         $args = apply_filters( 'vlp_search_args', $args );
         $query = new WP_Query( $args );
@@ -102,6 +111,15 @@ class VLP_Api_Block {
 
                 $post_type = get_post_type_object( $post->post_type );
 
+                $thumbnail_url = '';
+                $thumbnail_id = get_post_thumbnail_id( $post->ID );
+                if ( $thumbnail_id ) {
+                    $thumbnail = wp_get_attachment_image_src( $thumbnail_id, 'thumbnail' );
+                    if ( $thumbnail ) {
+                        $thumbnail_url = $thumbnail[0];
+                    }
+                }
+
                 $posts[] = array(
                     'id' => $post->ID,
                     'title' => $post->post_title,
@@ -110,6 +128,7 @@ class VLP_Api_Block {
                     'date' => $post->post_date,
                     'date_display' => mysql2date( "j M 'y", $post->post_date ),
                     'post_type' => $post_type->labels->singular_name,
+                    'thumbnail' => $thumbnail_url,
                     'label' => $post_type->labels->singular_name . ' ' . $post->ID . ' - ' . $post->post_title,
                 );
             }

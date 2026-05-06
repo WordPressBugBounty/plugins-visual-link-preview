@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: link preview, snippet, summary, visual link
 Requires at least: 4.4
 Tested up to: 6.9
-Stable tag: 2.3.1
+Stable tag: 2.4.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -61,6 +61,12 @@ Please report security bugs found in the source code of the plugin through the [
 4. Link to your own posts or to any external URL
 
 == Changelog ==
+= 2.4.0 =
+* Feature: Create VLP blocks in bulk from a list of websites
+* Improvement: Show 20 most recent posts
+* Improvement: Featured image in post selection
+* Fix: Prevent optional Microlink API key to be accessible by logged in users
+
 = 2.3.1 =
 * Fix: Harden external URL metadata and image fetch endpoints against authenticated SSRF attempts by blocking localhost, private/reserved IP ranges, and unsafe ports
 
@@ -178,6 +184,9 @@ Please report security bugs found in the source code of the plugin through the [
 * Very first version of this link preview plugin
 
 == Upgrade notice ==
+= 2.4.0 =
+Some great new features and improvements
+
 = 2.3.1 =
 Security hardening update for external URL fetching
 

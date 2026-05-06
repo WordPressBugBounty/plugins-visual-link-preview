@@ -38789,7 +38789,7 @@ var menu_Menu = function Menu(props) {
   }, props.editing && /*#__PURE__*/react.createElement("div", {
     id: "vlp-template-buttons"
   }, /*#__PURE__*/react.createElement("p", null, "Editing template: ", props.template.name), props.savingTemplate ? /*#__PURE__*/react.createElement(general_Loader, null) : /*#__PURE__*/react.createElement(react.Fragment, null, /*#__PURE__*/react.createElement("button", {
-    className: "button button-primary",
+    className: "button button-primary button-compact",
     disabled: !props.changesMade,
     onClick: function onClick() {
       if (confirm('Are you sure you want to save your changes?')) {
@@ -38797,7 +38797,7 @@ var menu_Menu = function Menu(props) {
       }
     }
   }, props.savingTemplate ? '...' : 'Save Changes'), /*#__PURE__*/react.createElement("button", {
-    className: "button",
+    className: "button button-secondary button-compact",
     onClick: function onClick() {
       if (!props.changesMade || confirm('Are you sure you want to cancel your changes?')) {
         props.onChangeEditing(false);
@@ -38869,12 +38869,12 @@ var ManageTemplate = function ManageTemplate(props) {
   }, /*#__PURE__*/react.createElement("span", null, "Slug: ", props.template.slug), " | ", /*#__PURE__*/react.createElement("span", null, "Name: ", props.template.name)), /*#__PURE__*/react.createElement("div", {
     className: "vlp-manage-templates-template-actions"
   }, props.savingTemplate ? /*#__PURE__*/react.createElement(general_Loader, null) : /*#__PURE__*/react.createElement(react.Fragment, null, editable ? /*#__PURE__*/react.createElement(react.Fragment, null, /*#__PURE__*/react.createElement("button", {
-    className: "button button-primary",
+    className: "button button-primary button-compact",
     onClick: function onClick() {
       return props.onChangeEditing(true);
     }
   }, "Edit Template"), /*#__PURE__*/react.createElement("button", {
-    className: "button button-primary",
+    className: "button button-primary button-compact",
     onClick: function onClick() {
       var name = prompt('Choose a name for the cloned template');
       if (name) {
@@ -38886,7 +38886,7 @@ var ManageTemplate = function ManageTemplate(props) {
       }
     }
   }, "Clone Template")) : /*#__PURE__*/react.createElement("button", {
-    className: "button button-primary",
+    className: "button button-primary button-compact",
     onClick: function onClick() {
       var name = prompt('Choose a name for the cloned template');
       if (name) {
@@ -38908,9 +38908,9 @@ var ManageTemplate = function ManageTemplate(props) {
       }
     }
   }, /*#__PURE__*/react.createElement("button", {
-    className: "button"
+    className: "button button-secondary button-compact"
   }, "Export")), /*#__PURE__*/react.createElement("button", {
-    className: "button",
+    className: "button button-secondary button-compact",
     onClick: function onClick() {
       var name = prompt('Choose a new name for this template', props.template.name);
       if (name && name !== props.template.name) {
@@ -38921,7 +38921,7 @@ var ManageTemplate = function ManageTemplate(props) {
     },
     disabled: !editable
   }, "Rename"), /*#__PURE__*/react.createElement("button", {
-    className: "button",
+    className: "button button-secondary button-compact",
     onClick: function onClick() {
       if (confirm('Are you sure you want to delete the "' + props.template.name + '" template?')) {
         props.onDeleteTemplate(props.template.slug);

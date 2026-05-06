@@ -31,7 +31,7 @@ class Visual_Link_Preview {
 	 * @since    1.0.0
 	 */
 	private function define_constants() {
-		define( 'VLP_VERSION', '2.3.1' );
+		define( 'VLP_VERSION', '2.4.0' );
 		define( 'VLP_DIR', plugin_dir_path( dirname( __FILE__ ) ) );
 		define( 'VLP_URL', plugin_dir_url( dirname( __FILE__ ) ) );
 	}

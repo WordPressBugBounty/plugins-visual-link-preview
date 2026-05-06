@@ -1677,7 +1677,7 @@ var FieldImage = /*#__PURE__*/function (_Component) {
       }, this.props.value !== 0 ? /*#__PURE__*/react.createElement("div", null, /*#__PURE__*/react.createElement("button", {
         type: "button",
         id: "vlp-link-image-remove",
-        className: "button",
+        className: "button button-secondary button-compact",
         onClick: this.onRemoveImage.bind(this)
       }, "Remove Image"), this.props.value === -1 && this.props.url ? /*#__PURE__*/react.createElement("div", null, /*#__PURE__*/react.createElement("a", {
         href: "#",
@@ -1685,7 +1685,7 @@ var FieldImage = /*#__PURE__*/function (_Component) {
       }, "Save image locally")) : null) : /*#__PURE__*/react.createElement("button", {
         type: "button",
         id: "vlp-link-image-add",
-        className: "button",
+        className: "button button-secondary button-compact",
         onClick: this.onAddImage.bind(this)
       }, "Add Image")), /*#__PURE__*/react.createElement("div", {
         className: "vlp-form-description"
@@ -8871,29 +8871,27 @@ function field_template_getPrototypeOf(o) { field_template_getPrototypeOf = Obje
 var FieldTemplate = /*#__PURE__*/function (_Component) {
   field_template_inherits(FieldTemplate, _Component);
   var _super = field_template_createSuper(FieldTemplate);
-  function FieldTemplate() {
+  function FieldTemplate(props) {
+    var _this;
     field_template_classCallCheck(this, FieldTemplate);
-    return _super.apply(this, arguments);
+    _this = _super.call(this, props);
+    var options = [{
+      value: 'use_default_from_settings',
+      label: 'Use Default from Settings'
+    }];
+    for (var template in vlp_admin.templates) {
+      options.push({
+        value: template,
+        label: vlp_admin.templates[template].name
+      });
+    }
+    _this.options = options;
+    return _this;
   }
   field_template_createClass(FieldTemplate, [{
-    key: "componentWillMount",
-    value: function componentWillMount() {
-      var options = [{
-        value: 'use_default_from_settings',
-        label: 'Use Default from Settings'
-      }];
-      for (var template in vlp_admin.templates) {
-        options.push({
-          value: template,
-          label: vlp_admin.templates[template].name
-        });
-      }
-      this.options = options;
-    }
-  }, {
     key: "render",
     value: function render() {
-      var _this = this;
+      var _this2 = this;
       return /*#__PURE__*/react.createElement("div", {
         className: "vlp-form-line"
       }, /*#__PURE__*/react.createElement("div", {
@@ -8907,10 +8905,10 @@ var FieldTemplate = /*#__PURE__*/function (_Component) {
         options: this.options,
         value: this.options.filter(function (_ref) {
           var value = _ref.value;
-          return value === _this.props.value;
+          return value === _this2.props.value;
         }),
         onChange: function onChange(option) {
-          return _this.props.onChangeField(option.value);
+          return _this2.props.onChangeField(option.value);
         },
         searchable: false,
         clearable: false
@@ -9196,7 +9194,7 @@ var FieldUrl = /*#__PURE__*/function (_Component) {
         className: "vlp-url-provider-status"
       }, !hasFetched && !isLoading && /*#__PURE__*/react.createElement("button", {
         type: "button",
-        className: "button",
+        className: "button button-secondary button-compact",
         onClick: this.props.onFetchDetails
       }, "Automatically fetch details"), isLoading && /*#__PURE__*/react.createElement("div", {
         className: "vlp-provider-loading"
@@ -9269,10 +9267,10 @@ var Preview = /*#__PURE__*/function (_Component) {
       this.updatePreview();
     }
   }, {
-    key: "componentWillReceiveProps",
-    value: function componentWillReceiveProps(nextProps) {
-      if (nextProps.needPreviewUpdate) {
-        this.updatePreview(nextProps.encoded);
+    key: "componentDidUpdate",
+    value: function componentDidUpdate(prevProps) {
+      if (this.props.needPreviewUpdate && (!prevProps.needPreviewUpdate || prevProps.encoded !== this.props.encoded)) {
+        this.updatePreview(this.props.encoded);
       }
     }
   }, {

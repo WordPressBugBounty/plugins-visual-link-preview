@@ -44,9 +44,14 @@ const Setting = (props) => {
         <Element className="bvs-setting-container" name={props.setting.id} >
             <div className="bvs-setting-label-container">
                 <span className="bvs-setting-label">
-                    <RequiredLabel object={props.setting} />{props.setting.name}
+                    <RequiredLabel object={props.setting} />
+                    {props.setting.name && (props.searchQuery ? Helpers.highlightText(props.setting.name, props.searchQuery) : props.setting.name)}
                 </span>
-                <span className="bvs-setting-description">{props.setting.description}</span>
+                {props.setting.description && (
+                    <span className="bvs-setting-description">
+                        {props.searchQuery ? Helpers.highlightText(props.setting.description, props.searchQuery) : props.setting.description}
+                    </span>
+                )}
                 {
                     props.setting.hasOwnProperty('documentation')
                     ?
@@ -89,6 +94,7 @@ Setting.propTypes = {
     setting: PropTypes.object.isRequired,
     onSettingChange: PropTypes.func.isRequired,
     settingsChanged: PropTypes.bool.isRequired,
+    searchQuery: PropTypes.string.isRequired,
 }
 
 export default Setting;

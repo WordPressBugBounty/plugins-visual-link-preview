@@ -3,7 +3,9 @@ import PropTypes from 'prop-types';
 import Select from 'react-select';
 
 export default class FieldTemplate extends Component {
-    componentWillMount() {
+    constructor(props) {
+        super(props);
+
         let options = [
             {
                 value: 'use_default_from_settings',

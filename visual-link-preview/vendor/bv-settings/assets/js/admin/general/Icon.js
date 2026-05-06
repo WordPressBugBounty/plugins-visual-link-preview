@@ -20,10 +20,13 @@ import IconPrinter from '../../../icons/printer.svg';
 import IconQuestion from '../../../icons/question.svg';
 import IconSearch from '../../../icons/search.svg';
 import IconShare from '../../../icons/share.svg';
+import IconShoppingCart from '../../../icons/shopping-cart.svg';
 import IconSliders from '../../../icons/sliders.svg';
 import IconStar from '../../../icons/star.svg';
 import IconSupport from '../../../icons/support.svg';
 import IconText from '../../../icons/text.svg';
+import IconUndo from '../../../icons/undo.svg';
+import IconUnlink from '../../../icons/unlink.svg';
 import IconUp from '../../../icons/up.svg';
 
 const icons = {
@@ -46,10 +49,13 @@ const icons = {
     question: IconQuestion,
     search: IconSearch,
     share: IconShare,
+    'shopping-cart': IconShoppingCart,
     sliders: IconSliders,
     star: IconStar,
     support: IconSupport,
     text: IconText,
+    undo: IconUndo,
+    unlink: IconUnlink,
     up: IconUp,
 };
 
@@ -61,10 +67,11 @@ const Icon = (props) => {
     }
 
     return (
-        <SVG
-            src={icon}
-            className='bvs-settings-icon'
-        />
+        <span className='bvs-settings-icon'>
+            <SVG
+                src={icon}
+            />
+        </span>
     );
 }
 export default Icon;

@@ -23,7 +23,7 @@ const Menu = (props) => {
                         :
                         <Fragment>
                             <button
-                                className="button button-primary"
+                                className="button button-primary button-compact"
                                 disabled={ ! props.changesMade }
                                 onClick={() => {
                                     if ( confirm( 'Are you sure you want to save your changes?' ) ) {
@@ -34,7 +34,7 @@ const Menu = (props) => {
                                 }}
                             >{ props.savingTemplate ? '...' : 'Save Changes' }</button>
                             <button
-                                className="button"
+                                className="button button-secondary button-compact"
                                 onClick={() => {
                                     if ( ! props.changesMade || confirm( 'Are you sure you want to cancel your changes?' ) ) {
                                         props.onChangeEditing(false);
