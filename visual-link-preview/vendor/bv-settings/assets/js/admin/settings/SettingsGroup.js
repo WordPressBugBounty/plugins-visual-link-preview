@@ -25,7 +25,7 @@ const SettingsGroup = (props) => {
             {
                 props.group.hasOwnProperty('documentation')
                 ?
-                <a href={props.group.documentation} target="_blank" className="bvs-setting-documentation">Learn More</a>
+                <a href={props.group.documentation} target="_blank" className="bvs-setting-documentation">{ props.group.hasOwnProperty('documentation_text') ? props.group.documentation_text : 'Learn More' }</a>
                 :
                 null
             }

@@ -33,11 +33,87 @@ export default {
 
         return true;
     },
-    beforeSettingDisplay(id, settings) {
+    getSettingId(setting) {
+        return setting && 'object' === typeof setting ? setting.id : setting;
+    },
+    getSettingValueFormat(setting) {
+        if ( setting && 'object' === typeof setting && setting.hasOwnProperty('valueFormat') ) {
+            return setting.valueFormat;
+        }
+
+        return false;
+    },
+    getSettingColumns(setting) {
+        if ( setting && 'object' === typeof setting && setting.hasOwnProperty('columns') && Array.isArray(setting.columns) ) {
+            return setting.columns;
+        }
+
+        return [];
+    },
+    beforeSettingDisplay(setting, settings) {
+        const id = this.getSettingId(setting);
         let value = settings[id];
+
+        if ( 'newlineList' === this.getSettingValueFormat(setting) && Array.isArray(value) ) {
+            value = value.join(bv_settings.eol || '\n');
+        }
+
+        if ( setting && 'objectTable' === setting.type && value && 'object' === typeof value ) {
+            const columns = this.getSettingColumns(setting);
+            let newValue = {};
+
+            for (let rowKey in value) {
+                newValue[rowKey] = {
+                    ...value[rowKey],
+                };
+
+                for (let column of columns) {
+                    if (
+                        'semicolonList' === column.format
+                        && newValue[rowKey].hasOwnProperty(column.key)
+                        && Array.isArray(newValue[rowKey][column.key])
+                    ) {
+                        newValue[rowKey][column.key] = newValue[rowKey][column.key].join(';');
+                    }
+                }
+            }
+
+            value = newValue;
+        }
+
         return value;
     },
-    beforeSettingSave(value, id, settings) {
+    beforeSettingSave(value, setting, settings) {
+        if ( 'newlineList' === this.getSettingValueFormat(setting) && 'string' === typeof value ) {
+            value = value.split(/\r\n|\r|\n/);
+        }
+
+        if ( setting && 'objectTable' === setting.type && value && 'object' === typeof value ) {
+            const columns = this.getSettingColumns(setting);
+            let newValue = {};
+
+            for (let rowKey in value) {
+                newValue[rowKey] = {
+                    ...value[rowKey],
+                };
+
+                for (let column of columns) {
+                    if (
+                        'semicolonList' === column.format
+                        && newValue[rowKey].hasOwnProperty(column.key)
+                        && 'string' === typeof newValue[rowKey][column.key]
+                    ) {
+                        newValue[rowKey][column.key] = newValue[rowKey][column.key]
+                            .split(';')
+                            .map((item) => item.trim())
+                            .filter((item) => item.length);
+                    }
+                }
+            }
+
+            value = newValue;
+        }
+
         return value;
     },
     escapeHTML(value) {
@@ -69,7 +145,7 @@ export default {
         return false;
     },
     formatChangedSettingValue(setting, value) {
-        const displayValue = this.beforeSettingDisplay(setting.id, { [setting.id]: value });
+        const displayValue = this.beforeSettingDisplay(setting, { [setting.id]: value });
 
         if ( 'toggle' === setting.type || 'boolean' === typeof displayValue ) {
             return displayValue ? 'On' : 'Off';

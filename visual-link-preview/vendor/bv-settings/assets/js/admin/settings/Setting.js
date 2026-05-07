@@ -8,9 +8,12 @@ import RequiredLabel from './RequiredLabel';
 import SettingCode from './setting/Code';
 import SettingColor from './setting/Color';
 import SettingDropdown from './setting/Dropdown';
+import SettingDropdownAsync from './setting/DropdownAsync';
+import SettingDropdownGrouped from './setting/DropdownGrouped';
 import SettingDropdownMultiselect from './setting/DropdownMultiselect';
 import SettingEmail from './setting/Email';
 import SettingNumber from './setting/Number';
+import SettingObjectTable from './setting/ObjectTable';
 import SettingRichTextarea from './setting/RichTextarea';
 import SettingText from './setting/Text';
 import SettingTextarea from './setting/Textarea';
@@ -22,9 +25,12 @@ const settingTypes = {
     code: SettingCode,
     color: SettingColor,
     dropdown: SettingDropdown,
+    dropdownAsync: SettingDropdownAsync,
+    dropdownGrouped: SettingDropdownGrouped,
     dropdownMultiselect: SettingDropdownMultiselect,
     email: SettingEmail,
     number: SettingNumber,
+    objectTable: SettingObjectTable,
     richTextarea: SettingRichTextarea,
     text: SettingText,
     textarea: SettingTextarea,
@@ -38,10 +44,12 @@ const Setting = (props) => {
     const SettingComponent = settingTypes.hasOwnProperty(props.setting.type) ? settingTypes[props.setting.type] : false;
     const InformationComponent = informationTypes.hasOwnProperty(props.setting.type) ? informationTypes[props.setting.type] : false;
     
-    const displayValue = SettingComponent ? Helpers.beforeSettingDisplay(props.setting.id, props.settings) : false;
+    const displayValue = SettingComponent ? Helpers.beforeSettingDisplay(props.setting, props.settings) : false;
+    const documentationText = props.setting.hasOwnProperty('documentation_text') ? props.setting.documentation_text : 'Learn More';
+    const isFullWidth = props.setting.fullWidth || 'full' === props.setting.layout;
 
     return (
-        <Element className="bvs-setting-container" name={props.setting.id} >
+        <Element className={`bvs-setting-container${isFullWidth ? ' bvs-setting-container-full' : ''}`} name={props.setting.id} >
             <div className="bvs-setting-label-container">
                 <span className="bvs-setting-label">
                     <RequiredLabel object={props.setting} />
@@ -55,7 +63,7 @@ const Setting = (props) => {
                 {
                     props.setting.hasOwnProperty('documentation')
                     ?
-                    <a href={props.setting.documentation} target="_blank" className="bvs-setting-documentation">Learn More</a>
+                    <a href={props.setting.documentation} target="_blank" className="bvs-setting-documentation">{ documentationText }</a>
                     :
                     null
                 }
@@ -67,7 +75,7 @@ const Setting = (props) => {
                         setting={props.setting}
                         settingsChanged={props.settingsChanged}
                         onValueChange={(value) => {
-                            const saveValue = Helpers.beforeSettingSave(value, props.setting.id, props.settings);
+                            const saveValue = Helpers.beforeSettingSave(value, props.setting, props.settings);
                             return props.onSettingChange(props.setting.id, saveValue)
                         }}
                         value={displayValue}

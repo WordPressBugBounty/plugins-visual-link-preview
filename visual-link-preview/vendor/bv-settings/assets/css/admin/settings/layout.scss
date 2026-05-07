@@ -650,6 +650,15 @@ mark {
             display: inline-block;
             width: 50%;
         }
+
+        .bvs-setting-container-full {
+            .bvs-setting-label-container,
+            .bvs-setting-input-container {
+                display: block;
+                width: 100%;
+                margin-right: 0;
+            }
+        }
     }
 
     .bvs-settings-scroll-to-top {

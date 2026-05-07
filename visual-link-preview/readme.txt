@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: link preview, snippet, summary, visual link
 Requires at least: 4.4
 Tested up to: 6.9
-Stable tag: 2.4.0
+Stable tag: 2.4.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -61,6 +61,9 @@ Please report security bugs found in the source code of the plugin through the [
 4. Link to your own posts or to any external URL
 
 == Changelog ==
+= 2.4.1 =
+* Fix: Prevent long post titles from causing horizontal scroll
+
 = 2.4.0 =
 * Feature: Create VLP blocks in bulk from a list of websites
 * Improvement: Show 20 most recent posts
@@ -184,6 +187,9 @@ Please report security bugs found in the source code of the plugin through the [
 * Very first version of this link preview plugin
 
 == Upgrade notice ==
+= 2.4.1 =
+Styling improvement
+
 = 2.4.0 =
 Some great new features and improvements
 

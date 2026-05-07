@@ -27,7 +27,7 @@ const SettingsSubGroup = (props) => {
             {
                 props.subgroup.hasOwnProperty('documentation')
                 ?
-                <a href={props.subgroup.documentation} target="_blank" className="bvs-setting-documentation">Learn More</a>
+                <a href={props.subgroup.documentation} target="_blank" className="bvs-setting-documentation">{ props.subgroup.hasOwnProperty('documentation_text') ? props.subgroup.documentation_text : 'Learn More' }</a>
                 :
                 null
             }
