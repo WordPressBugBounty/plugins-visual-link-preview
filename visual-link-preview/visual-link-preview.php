@@ -15,7 +15,7 @@
  * Plugin Name:       Visual Link Preview
  * Plugin URI:        http://bootstrapped.ventures/visual-link-preview/
  * Description:       Display a fully customizable visual link preview for any internal or external link.
- * Version:           2.4.1
+ * Version:           2.4.2
  * Author:            Bootstrapped Ventures
  * Author URI:        http://bootstrapped.ventures/
  * License:           GPL-2.0+

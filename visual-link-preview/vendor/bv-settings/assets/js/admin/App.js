@@ -134,7 +134,11 @@ export default class App extends Component {
     }
 
     settingsChanged() {
-        return JSON.stringify(this.state.savedSettings) !== JSON.stringify(this.state.currentSettings);
+        return 0 < Helpers.getChangedSettings(
+            bv_settings.structure,
+            this.state.savedSettings,
+            this.state.currentSettings
+        ).length;
     }
 
     onSearchChange(query) {

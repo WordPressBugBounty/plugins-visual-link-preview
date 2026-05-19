@@ -1974,7 +1974,7 @@ var _default = /*#__PURE__*/function (_Component) {
       delete link.encoded;
 
       // Add class to link object.
-      link.custom_class = this.props.className;
+      link.custom_class = this.getClassName();
       var encoded = encodeLink(link);
       if (this.props.attributes.encoded !== encoded) {
         this.props.setAttributes({
@@ -2041,10 +2041,22 @@ var _default = /*#__PURE__*/function (_Component) {
       });
     }
   }, {
+    key: "getClassName",
+    value: function getClassName() {
+      var blockProps = this.props.blockProps || {};
+      return blockProps.className || this.props.className || '';
+    }
+  }, {
+    key: "getWrapperProps",
+    value: function getWrapperProps() {
+      var blockProps = this.props.blockProps || {};
+      return 0 < Object.keys(blockProps).length ? blockProps : {
+        className: this.getClassName()
+      };
+    }
+  }, {
     key: "render",
     value: function render() {
-      var className = this.props.className;
-
       // Try to fix problem introduced in 1.3.1.
       var attributes = this.props.attributes;
       var summary = attributes.summary;
@@ -2061,9 +2073,7 @@ var _default = /*#__PURE__*/function (_Component) {
       if (!attributes.hasOwnProperty('new_tab')) {
         attributes.new_tab = 'external' === attributes.type ? true : false;
       }
-      return /*#__PURE__*/React.createElement(edit_Fragment, null, /*#__PURE__*/React.createElement("div", {
-        className: className
-      }, !attributes.type ? /*#__PURE__*/React.createElement(ChooseType, this.props) : /*#__PURE__*/React.createElement(edit_Fragment, null, this.state.gettingContent ? /*#__PURE__*/React.createElement(Placeholder, null, /*#__PURE__*/React.createElement(edit_Spinner, null)) : /*#__PURE__*/React.createElement(edit_Fragment, null, /*#__PURE__*/React.createElement(Sidebar_default, this.props), attributes.image_id || attributes.title || attributes.summary ? /*#__PURE__*/React.createElement(Disabled, null, /*#__PURE__*/React.createElement(ServerSideRender, {
+      return /*#__PURE__*/React.createElement(edit_Fragment, null, /*#__PURE__*/React.createElement("div", this.getWrapperProps(), !attributes.type ? /*#__PURE__*/React.createElement(ChooseType, this.props) : /*#__PURE__*/React.createElement(edit_Fragment, null, this.state.gettingContent ? /*#__PURE__*/React.createElement(Placeholder, null, /*#__PURE__*/React.createElement(edit_Spinner, null)) : /*#__PURE__*/React.createElement(edit_Fragment, null, /*#__PURE__*/React.createElement(Sidebar_default, this.props), attributes.image_id || attributes.title || attributes.summary ? /*#__PURE__*/React.createElement(Disabled, null, /*#__PURE__*/React.createElement(ServerSideRender, {
         block: "visual-link-preview/link",
         attributes: attributes
       })) : /*#__PURE__*/React.createElement(Placeholder, null, edit_('Set content for this link in the sidebar.'))))));
@@ -2073,6 +2083,7 @@ var _default = /*#__PURE__*/function (_Component) {
 }(edit_Component);
 
 ;// CONCATENATED MODULE: ./visual-link-preview/assets/js/blocks/visual-link-preview/index.js
+function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 
 
 
@@ -2082,18 +2093,42 @@ var registerBlockType = wp.blocks.registerBlockType;
 
 // Backwards compatibility.
 var RichText;
+var useBlockProps;
 if (wp.hasOwnProperty('blockEditor')) {
   RichText = wp.blockEditor.RichText;
+  useBlockProps = wp.blockEditor.useBlockProps;
 } else {
   RichText = wp.editor.RichText;
 }
-registerBlockType('visual-link-preview/link', {
+var blockApiVersion = window.vlp_blocks && window.vlp_blocks.api_version ? parseInt(window.vlp_blocks.api_version, 10) : false;
+var shouldUseBlockProps = blockApiVersion && useBlockProps;
+var Edit = function Edit(props) {
+  if (shouldUseBlockProps) {
+    return /*#__PURE__*/React.createElement(_default, _extends({}, props, {
+      blockProps: useBlockProps()
+    }));
+  }
+  return /*#__PURE__*/React.createElement(_default, props);
+};
+var getSaveBlockProps = function getSaveBlockProps(className) {
+  if (shouldUseBlockProps && useBlockProps.save) {
+    return useBlockProps.save({
+      className: className
+    });
+  }
+  return {
+    className: className
+  };
+};
+var blockSettings = {
   title: visual_link_preview_('Visual Link Preview'),
   description: visual_link_preview_('A visual link block for internal or external links.'),
   icon: 'id',
   keywords: ['vlp'],
   category: 'widgets',
-  supportHTML: false,
+  supports: {
+    html: false
+  },
   attributes: {
     title: {
       type: 'string',
@@ -2285,13 +2320,11 @@ registerBlockType('visual-link-preview/link', {
       }
     }]
   },
-  edit: _default,
+  edit: Edit,
   save: function save(_ref13) {
     var className = _ref13.className,
       attributes = _ref13.attributes;
-    return /*#__PURE__*/React.createElement("div", {
-      className: className
-    }, attributes.image_url && /*#__PURE__*/React.createElement("img", {
+    return /*#__PURE__*/React.createElement("div", getSaveBlockProps(className), attributes.image_url && /*#__PURE__*/React.createElement("img", {
       className: "vlp-image",
       src: attributes.image_url
     }), /*#__PURE__*/React.createElement(RichText.Content, {
@@ -2304,7 +2337,11 @@ registerBlockType('visual-link-preview/link', {
     }));
   },
   deprecated: deprecated
-});
+};
+if (blockApiVersion) {
+  blockSettings.apiVersion = blockApiVersion;
+}
+registerBlockType('visual-link-preview/link', blockSettings);
 ;// CONCATENATED MODULE: ./visual-link-preview/assets/js/blocks.js
 
 })();

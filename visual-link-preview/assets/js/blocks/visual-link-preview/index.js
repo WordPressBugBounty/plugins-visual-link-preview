@@ -1,6 +1,6 @@
 import { decodeLink } from '../../admin/encoder';
 import deprecated from './deprecated';
-import edit from './edit';
+import EditComponent from './edit';
 
 import '../../../css/blocks/blocks.scss';
 
@@ -11,19 +11,40 @@ const {
 
 // Backwards compatibility.
 let RichText;
+let useBlockProps;
 if ( wp.hasOwnProperty( 'blockEditor' ) ) {
 	RichText = wp.blockEditor.RichText;
+	useBlockProps = wp.blockEditor.useBlockProps;
 } else {
 	RichText = wp.editor.RichText;
 }
 
-registerBlockType( 'visual-link-preview/link', {
+const blockApiVersion = window.vlp_blocks && window.vlp_blocks.api_version ? parseInt( window.vlp_blocks.api_version, 10 ) : false;
+const shouldUseBlockProps = blockApiVersion && useBlockProps;
+const Edit = ( props ) => {
+	if ( shouldUseBlockProps ) {
+		return <EditComponent { ...props } blockProps={ useBlockProps() } />;
+	}
+
+	return <EditComponent { ...props } />;
+};
+const getSaveBlockProps = ( className ) => {
+	if ( shouldUseBlockProps && useBlockProps.save ) {
+		return useBlockProps.save( { className } );
+	}
+
+	return { className };
+};
+
+const blockSettings = {
 	title: __( 'Visual Link Preview' ),
 	description: __( 'A visual link block for internal or external links.' ),
 	icon: 'id',
 	keywords: ['vlp'],
 	category: 'widgets',
-	supportHTML: false,
+	supports: {
+		html: false,
+	},
 	attributes: {		
 		title: {
 			type: 'string',
@@ -196,10 +217,10 @@ registerBlockType( 'visual-link-preview/link', {
             },
         ]
     },
-	edit: edit,
+	edit: Edit,
 	save( { className, attributes } ) {
 		return (
-			<div className={ className }>
+			<div { ...getSaveBlockProps( className ) }>
 				{
 					attributes.image_url && (
 						<img className="vlp-image" src={ attributes.image_url } />
@@ -211,4 +232,10 @@ registerBlockType( 'visual-link-preview/link', {
 		);
 	},
 	deprecated: deprecated,
-} );
+};
+
+if ( blockApiVersion ) {
+	blockSettings.apiVersion = blockApiVersion;
+}
+
+registerBlockType( 'visual-link-preview/link', blockSettings );

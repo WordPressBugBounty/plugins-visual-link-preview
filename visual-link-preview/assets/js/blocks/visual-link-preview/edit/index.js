@@ -47,7 +47,7 @@ export default class extends Component {
         delete link.encoded;
 
         // Add class to link object.
-        link.custom_class = this.props.className;
+        link.custom_class = this.getClassName();
 
         const encoded = encodeLink(link);
 
@@ -115,9 +115,21 @@ export default class extends Component {
         });
     }
 
-    render() {
-        const { className } = this.props;
+    getClassName() {
+        const blockProps = this.props.blockProps || {};
 
+        return blockProps.className || this.props.className || '';
+    }
+
+    getWrapperProps() {
+        const blockProps = this.props.blockProps || {};
+
+        return 0 < Object.keys( blockProps ).length ? blockProps : {
+            className: this.getClassName(),
+        };
+    }
+
+    render() {
         // Try to fix problem introduced in 1.3.1.
         let { attributes } = this.props;
         let { summary } = attributes;
@@ -138,7 +150,7 @@ export default class extends Component {
 
         return (
             <Fragment>
-                <div className={ className }>
+                <div { ...this.getWrapperProps() }>
                     {
                         ! attributes.type
                         ?

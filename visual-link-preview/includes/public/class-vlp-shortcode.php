@@ -41,6 +41,15 @@ class VLP_Shortcode {
 	}
 
 	/**
+	 * Get the block API version to use for supported WordPress versions.
+	 *
+	 * @since    2.4.2
+	 */
+	public static function block_api_version() {
+		return version_compare( get_bloginfo( 'version' ), '6.3', '>=' ) ? 3 : false;
+	}
+
+	/**
 	 * Register blocks.
 	 *
 	 * @since    2.2.2
@@ -104,6 +113,11 @@ class VLP_Shortcode {
 				),
 				'render_callback' => array( __CLASS__, 'link_preview_block' ),
 			);
+
+			$api_version = self::block_api_version();
+			if ( $api_version ) {
+				$block_settings['api_version'] = $api_version;
+			}
 
 			register_block_type( 'visual-link-preview/link', $block_settings );
 		}

@@ -3,8 +3,8 @@ Contributors: BrechtVds
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=QG7KZMGFU325Y
 Tags: link preview, snippet, summary, visual link
 Requires at least: 4.4
-Tested up to: 6.9
-Stable tag: 2.4.1
+Tested up to: 7.0
+Stable tag: 2.4.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -61,6 +61,10 @@ Please report security bugs found in the source code of the plugin through the [
 4. Link to your own posts or to any external URL
 
 == Changelog ==
+= 2.4.2 =
+* Improvement: Block Editor iFrame compatibility
+* Fix: Prevent subscribers from accessing VLP preview endpoint
+
 = 2.4.1 =
 * Fix: Prevent long post titles from causing horizontal scroll
 
@@ -187,6 +191,9 @@ Please report security bugs found in the source code of the plugin through the [
 * Very first version of this link preview plugin
 
 == Upgrade notice ==
+= 2.4.2 =
+Update to ensure WordPress 7.0 compatibility
+
 = 2.4.1 =
 Styling improvement
 

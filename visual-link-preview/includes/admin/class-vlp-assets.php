@@ -27,6 +27,7 @@ class VLP_Assets {
 	public static function init() {
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue' ) );
 		add_action( 'enqueue_block_editor_assets', array( __CLASS__, 'enqueue_blocks' ) );
+		add_action( 'enqueue_block_assets', array( __CLASS__, 'enqueue_block_content_assets' ) );
 	}
 
 	/**
@@ -81,6 +82,7 @@ class VLP_Assets {
 		wp_enqueue_style( 'vlp-blocks', VLP_URL . 'dist/blocks.css', array( 'wp-edit-blocks' ), VLP_VERSION );
 
 		wp_localize_script( 'vlp-blocks', 'vlp_blocks', array(
+			'api_version' => VLP_Shortcode::block_api_version(),
 			'ajax_url' => admin_url( 'admin-ajax.php' ),
 			'nonce' => wp_create_nonce( 'vlp' ),
 			'templates' => VLP_Template_Manager::get_templates(),
@@ -88,6 +90,17 @@ class VLP_Assets {
 			'settings_link' => admin_url( 'options-general.php?page=bv_settings_vlp' ),
 			'url_providers' => VLP_Url_Provider_Manager::get_available_providers(),
 		));
+	}
+
+	/**
+	 * Enqueue block content assets inside the iframe editor.
+	 *
+	 * @since    2.4.2
+	 */
+	public static function enqueue_block_content_assets() {
+		if ( is_admin() ) {
+			wp_enqueue_style( 'vlp-blocks', VLP_URL . 'dist/blocks.css', array( 'wp-edit-blocks' ), VLP_VERSION );
+		}
 	}
 }
 

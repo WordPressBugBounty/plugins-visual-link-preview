@@ -150,21 +150,29 @@ class VLP_Template_Manager {
 	 * @since    1.0.0
 	 */
 	public static function ajax_get_template() {
-		if ( check_ajax_referer( 'vlp', 'security', false ) ) {
-			$encoded = isset( $_POST['encoded'] ) ? sanitize_text_field( wp_unslash( $_POST['encoded'] ) ) : ''; // Input var okay.
-			$link = new VLP_Link( $encoded );
-
-			$template = VLP_Template_Manager::get_template_by_slug( $link->template() );
-
-			$output = '<style type="text/css">' . VLP_Template_Manager::get_template_css( $template ) . VLP_Template_Style::get_css() . '</style>';
-			$output .= $link->output();
-
-			wp_send_json_success( array(
-				'template' => $output,
-			) );
+		if ( ! check_ajax_referer( 'vlp', 'security', false ) ) {
+			wp_send_json_error( array(
+				'message' => __( 'Invalid security token.', 'visual-link-preview' ),
+			), 403 );
 		}
 
-		wp_die();
+		if ( ! current_user_can( 'edit_posts' ) ) {
+			wp_send_json_error( array(
+				'message' => __( 'You do not have permission to preview templates.', 'visual-link-preview' ),
+			), 403 );
+		}
+
+		$encoded = isset( $_POST['encoded'] ) ? sanitize_text_field( wp_unslash( $_POST['encoded'] ) ) : ''; // Input var okay.
+		$link = new VLP_Link( $encoded );
+
+		$template = VLP_Template_Manager::get_template_by_slug( $link->template() );
+
+		$output = '<style type="text/css">' . VLP_Template_Manager::get_template_css( $template ) . VLP_Template_Style::get_css() . '</style>';
+		$output .= $link->output();
+
+		wp_send_json_success( array(
+			'template' => $output,
+		) );
 	}
 
 	/**

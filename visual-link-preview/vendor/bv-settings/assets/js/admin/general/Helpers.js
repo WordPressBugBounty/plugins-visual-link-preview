@@ -218,6 +218,31 @@ export default {
         return Object.prototype.hasOwnProperty.call(savedSettings, setting.id)
             || Object.prototype.hasOwnProperty.call(currentSettings, setting.id);
     },
+    settingValuesMatch(setting, savedValue, currentValue) {
+        if ( JSON.stringify(savedValue) === JSON.stringify(currentValue) ) {
+            return true;
+        }
+
+        if (
+            setting
+            && 'number' === setting.type
+            && '' !== savedValue
+            && '' !== currentValue
+            && null !== savedValue
+            && null !== currentValue
+            && undefined !== savedValue
+            && undefined !== currentValue
+        ) {
+            const savedNumber = Number(savedValue);
+            const currentNumber = Number(currentValue);
+
+            if ( ! isNaN(savedNumber) && ! isNaN(currentNumber) ) {
+                return savedNumber === currentNumber;
+            }
+        }
+
+        return false;
+    },
     getChangedSettings(structure, savedSettings, currentSettings) {
         const changedSettings = [];
 
@@ -229,7 +254,7 @@ export default {
             const savedValue = savedSettings[setting.id];
             const currentValue = currentSettings[setting.id];
 
-            if ( JSON.stringify(savedValue) === JSON.stringify(currentValue) ) {
+            if ( this.settingValuesMatch(setting, savedValue, currentValue) ) {
                 return;
             }
 
